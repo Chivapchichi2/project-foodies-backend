@@ -7,4 +7,25 @@ import authenticate from '../middlewares/authenticate.js';
 
 const recipesRouter = express.Router();
 
+recipesRouter.get('/', recipesControllers.getRecipesByFilter);
+
+recipesRouter.post(
+  '/',
+  authenticate,
+  isEmptyBody,
+  validateBody,
+  recipesControllers.getRecipesByFilter
+);
+
+recipesRouter.get('/popular', recipesControllers.getPopularRecipes);
+
+// Not tested
+recipesRouter.get(
+  '/myrecipes',
+  authenticate,
+  recipesControllers.getRecipesFromUser
+);
+
+recipesRouter.get('/:id', isValidId, recipesControllers.getOneRecipe);
+
 export default recipesRouter;
