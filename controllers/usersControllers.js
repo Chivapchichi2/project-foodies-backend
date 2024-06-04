@@ -73,7 +73,17 @@ const signIn = async (req, res, next) => {
   }
 };
 
-const signOut = async (req, res) => {};
+const signOut = async (req, res, next) => {
+  try {
+    const { _id } = req.user;
+    await usersService.updateUser({ _id }, { token: null });
+    res.status(204).json({
+      message: 'No Content',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 const getCurrent = (req, res) => {};
 
