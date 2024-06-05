@@ -25,7 +25,7 @@ const signUp = async (req, res, next) => {
   const newUser = await usersService.saveUser({ ...req.body, avatarURL });
   res.status(201).json({
     user: {
-      username: newUser.username,
+      name: newUser.name,
       email: newUser.email,
     },
   });
@@ -59,7 +59,7 @@ const signIn = async (req, res, next) => {
   res.json({
     token,
     user: {
-      username: user.username,
+      name: user.name,
       email: user.email,
     },
   });
