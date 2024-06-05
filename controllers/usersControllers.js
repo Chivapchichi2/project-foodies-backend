@@ -4,6 +4,10 @@ import HttpError from '../helpers/HttpError.js';
 import gravatar from 'gravatar';
 import compareHash from '../helpers/compareHash.js';
 import { createToken } from '../helpers/jwt.js';
+import cloudinary from '../helpers/cloudinary.js';
+import fs from 'fs/promises';
+import path from 'path';
+import Jimp from 'jimp';
 
 const signUp = async (req, res, next) => {
   const { email } = req.body;
@@ -73,7 +77,29 @@ const signOut = async (req, res, next) => {
 
 const getCurrent = (req, res) => {};
 
-const updateAvatar = async (req, res) => {};
+const updateAvatar = async (req, res) => {
+  const { _id } = req.user;
+  const { path } = req.file;
+  const img = await Jimp.read(path);
+  await img.resize(250, 250).writeAsync(path);
+
+  try {
+    const { url: avatarURL } = await cloudinary.uploader.upload(path, {
+      folder: 'avatars',
+    });
+
+    await userServices.updateUser(
+      { _id},
+      { avatarURL }
+    );
+
+    res.status(200).json({ avatarURL });
+  } catch (err) {
+    throw HttpError(400, err.message);
+  } finally {
+    await fs.unlink(path);
+  }
+};
 
 export default {
   signUp: ctrlWrapper(signUp),
