@@ -111,6 +111,42 @@ const getFollowers = async (req, res) => {
   res.status(200).json({ followers: user.followers });
 };
 
+const getFollowing = async (req, res) => {
+  const { _id } = req.user;
+  const user = await usersServices.findUser({ _id }).populate('following');
+  if (!user) {
+    throw HttpError(404, 'User not found');
+  }
+
+  res.status(200).json({ following: user.following });
+};
+
+const followUser = async (req, res) => {
+  const { _id } = req.user;
+  const { userId } = req.params;
+  const currentUser = await usersServices.findUser({ _id });
+  if (!currentUser) {
+    throw HttpError(404, 'User not found');
+  }
+
+  const userToFollow = await usersServices.findUser({ _id: userId });
+  if (!userToFollow) {
+    throw HttpError(404, 'User to follow not found');
+  }
+
+  if (currentUser.following.includes(userId)) {
+    throw HttpError(400, 'User is already being followed');
+  }
+
+  currentUser.following.push(userId);
+  await currentUser.save();
+
+  userToFollow.followers.push(_id);
+  await userToFollow.save();
+
+  res.status(200).json({ message: 'User followed successfully' });
+};
+
 export default {
   signUp: ctrlWrapper(signUp),
   signIn: ctrlWrapper(signIn),
@@ -118,4 +154,6 @@ export default {
   getCurrent: ctrlWrapper(getCurrent),
   updateAvatar: ctrlWrapper(updateAvatar),
   getFollowers: ctrlWrapper(getFollowers),
+  getFollowing: ctrlWrapper(getFollowing),
+  followUser: ctrlWrapper(followUser),
 };

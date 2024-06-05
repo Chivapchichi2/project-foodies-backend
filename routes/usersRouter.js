@@ -36,4 +36,8 @@ usersRouter.patch(
 
 usersRouter.get('/followers', authenticate, authControllers.getFollowers);
 
+usersRouter.get('/following', authenticate, authControllers.getFollowing);
+
+usersRouter.post('/follow/:userId', authenticate, authControllers.followUser);
+
 export default usersRouter;
