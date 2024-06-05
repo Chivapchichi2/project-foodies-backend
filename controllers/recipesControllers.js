@@ -60,9 +60,25 @@ const getRecipesFromUser = async (req, res, next) => {
   res.json(result);
 };
 
+const addRecipe = async (req, res, next) => {
+  const { _id: owner } = req.user;
+  const newRecipe = await recipesService.addRecipe({ ...req.body, owner });
+  res.status(201).json(newRecipe);
+};
+
+const removeRecipe = async (req, res, next) => {
+  const { _id: owner } = req.user;
+  const { id } = req.params;
+  const result = await recipesService.removeRecipe(id, owner);
+  handleResult(result);
+  res.json(result);
+};
+
 export default {
   getRecipesByFilter: ctrlWrapper(getRecipesByFilter),
   getOneRecipe: ctrlWrapper(getOneRecipe),
   getPopularRecipes: ctrlWrapper(getPopularRecipes),
   getRecipesFromUser: ctrlWrapper(getRecipesFromUser),
+  addRecipe: ctrlWrapper(addRecipe),
+  removeRecipe: ctrlWrapper(removeRecipe),
 };

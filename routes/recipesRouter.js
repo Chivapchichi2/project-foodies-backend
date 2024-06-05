@@ -13,9 +13,11 @@ recipesRouter.post(
   '/',
   authenticate,
   isEmptyBody,
-  validateBody,
-  recipesControllers.getRecipesByFilter
+  validateBody, // To do schema
+  recipesControllers.addRecipe
 );
+
+recipesRouter.delete('/', authenticate, recipesControllers.removeRecipe);
 
 recipesRouter.get('/popular', recipesControllers.getPopularRecipes);
 

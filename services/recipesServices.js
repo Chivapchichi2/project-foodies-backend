@@ -20,6 +20,18 @@ export const addRecipe = data => {
   return Recipe.create(data);
 };
 
+export const addFavoriteRecipe = (recipeId, owner) => {
+  // return
+};
+
+export const removeFavoriteRecipe = (recipeId, owner) => {
+  // return
+};
+
+export const getFavoriteRecipe = owner => {
+  // return
+};
+
 export const updateRecipe = (recipeId, owner, data) => {
   return Recipe.findOneAndUpdate({ _id: recipeId, owner }, data);
 };
