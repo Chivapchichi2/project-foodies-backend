@@ -34,4 +34,6 @@ usersRouter.patch(
   authControllers.updateAvatar
 );
 
+usersRouter.get('/followers', authenticate, authControllers.getFollowers);
+
 export default usersRouter;

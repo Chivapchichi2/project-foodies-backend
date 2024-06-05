@@ -9,7 +9,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import Jimp from 'jimp';
 
-const signUp = async (req, res, next) => {
+const signUp = async (req, res) => {
   const { email } = req.body;
   const user = await usersServices.findUser({ email });
   if (user) {
@@ -35,7 +35,7 @@ const signUp = async (req, res, next) => {
   });
 };
 
-const signIn = async (req, res, next) => {
+const signIn = async (req, res) => {
   const { email, password } = req.body;
   const user = await usersServices.findUser({ email });
 
@@ -69,15 +69,15 @@ const signIn = async (req, res, next) => {
   });
 };
 
-const signOut = async (req, res, next) => {
+const signOut = async (req, res) => {
   const { _id } = req.user;
   await usersServices.updateUser({ _id }, { token: null });
   res.status(204).json();
 };
 
 const getCurrent = (req, res) => {
-  const { name, email, avatarURL } = req.user;
-  res.status(200).json({ name, email, avatarURL });
+  const { name, email, avatarURL, followers, following } = req.user;
+  res.status(200).json({ name, email, avatarURL, followers, following });
 };
 
 const updateAvatar = async (req, res) => {
@@ -101,10 +101,21 @@ const updateAvatar = async (req, res) => {
   }
 };
 
+const getFollowers = async (req, res) => {
+  const { _id } = req.user;
+  const user = await usersServices.findUser({ _id }).populate('followers');
+  if (!user) {
+    throw HttpError(404, 'User not found');
+  }
+
+  res.status(200).json({ followers: user.followers });
+};
+
 export default {
   signUp: ctrlWrapper(signUp),
   signIn: ctrlWrapper(signIn),
   signOut: ctrlWrapper(signOut),
   getCurrent: ctrlWrapper(getCurrent),
   updateAvatar: ctrlWrapper(updateAvatar),
+  getFollowers: ctrlWrapper(getFollowers),
 };
