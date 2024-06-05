@@ -77,9 +77,7 @@ const signOut = async (req, res, next) => {
   try {
     const { _id } = req.user;
     await usersService.updateUser({ _id }, { token: null });
-    res.status(204).json({
-      message: 'No Content',
-    });
+    res.status(204).json();
   } catch (error) {
     next(error);
   }
