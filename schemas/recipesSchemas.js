@@ -1,5 +1,6 @@
 import Joi from 'joi';
 
+// To do ingredients schema
 const ingredientsSchema = Joi.object().keys({
   name: Joi.string().required(),
   measure: Joi.number().required(),
@@ -14,5 +15,5 @@ export const createRecipeSchema = Joi.object({
   time: Joi.string().required(),
   category: Joi.string().required(),
   // In question
-  ingredients: Joi.array().items(ingredientsSchema).required(),
+  // ingredients: Joi.array().items(ingredientsSchema).required(),
 });

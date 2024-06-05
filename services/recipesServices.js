@@ -1,3 +1,4 @@
+import Favorite from '../db/models/Favorite.js';
 import Recipe from '../db/models/Recipe.js';
 
 export const listRecipes = (search = {}) => {
@@ -20,16 +21,52 @@ export const addRecipe = data => {
   return Recipe.create(data);
 };
 
-export const addFavoriteRecipe = (recipeId, owner) => {
-  // return
+export const addFavoriteRecipe = (recipeId, userId) => {
+  return Favorite.create({ recipe: recipeId, user: userId });
 };
 
-export const removeFavoriteRecipe = (recipeId, owner) => {
-  // return
+export const removeFavoriteRecipe = (recipeId, userId) => {
+  return Favorite.findOneAndDelete({ recipe: recipeId, user: userId });
 };
 
-export const getFavoriteRecipe = owner => {
-  // return
+export const getMyFavoriteRecipe = (search = {}) => {
+  const { filter = {}, fields = '', settings = {} } = search;
+  return Favorite.find(filter, fields, settings).populate('recipe');
+};
+
+export const getAllFavoriteRecipe = () => {
+  return Favorite.aggregate([
+    {
+      $group: {
+        _id: '$recipe',
+        count: { $sum: 1 },
+      },
+    },
+    {
+      $sort: { count: -1 },
+    },
+    {
+      $limit: 10,
+    },
+    {
+      $lookup: {
+        from: 'recipes',
+        localField: '_id',
+        foreignField: '_id',
+        as: 'recipe',
+      },
+    },
+    {
+      $unwind: '$recipe',
+    },
+    {
+      $project: {
+        _id: 0,
+        recipe: 1,
+        count: 1,
+      },
+    },
+  ]);
 };
 
 export const updateRecipe = (recipeId, owner, data) => {

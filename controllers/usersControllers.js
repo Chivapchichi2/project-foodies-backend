@@ -88,10 +88,7 @@ const updateAvatar = async (req, res) => {
       folder: 'avatars',
     });
 
-    await userServices.updateUser(
-      { _id},
-      { avatarURL }
-    );
+    await usersService.updateUser({ _id }, { avatarURL });
 
     res.status(200).json({ avatarURL });
   } catch (err) {
