@@ -8,6 +8,7 @@ import cloudinary from '../helpers/cloudinary.js';
 import fs from 'fs/promises';
 import path from 'path';
 import Jimp from 'jimp';
+import { log } from 'console';
 
 const signUp = async (req, res) => {
   const { email } = req.body;
@@ -147,6 +148,38 @@ const followUser = async (req, res) => {
   res.status(200).json({ message: 'User followed successfully' });
 };
 
+const unfollowUser = async (req, res) => {
+  const { _id } = req.user;
+  const { userId } = req.params;
+
+  const currentUser = await usersServices.findUser({ _id });
+  if (!currentUser) {
+    throw HttpError(404, 'Current user not found');
+  }
+
+  const userToUnfollow = await usersServices.findUser({ _id: userId });
+  if (!userToUnfollow) {
+    throw HttpError(404, 'User to unfollow not found');
+  }
+
+  if (!currentUser.following.includes(userId)) {
+    throw HttpError(400, 'User is not being followed');
+  }
+
+  currentUser.following = currentUser.following.filter(
+    id => id.toString() !== userId
+  );
+  await currentUser.save();
+
+  userToUnfollow.followers = userToUnfollow.followers.filter(
+    id => id.toString() !== _id.toString()
+  );
+
+  await userToUnfollow.save();
+
+  res.status(200).json({ message: 'User unfollowed successfully' });
+};
+
 export default {
   signUp: ctrlWrapper(signUp),
   signIn: ctrlWrapper(signIn),
@@ -156,4 +189,5 @@ export default {
   getFollowers: ctrlWrapper(getFollowers),
   getFollowing: ctrlWrapper(getFollowing),
   followUser: ctrlWrapper(followUser),
+  unfollowUser: ctrlWrapper(unfollowUser),
 };

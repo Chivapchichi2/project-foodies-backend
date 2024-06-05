@@ -40,4 +40,10 @@ usersRouter.get('/following', authenticate, authControllers.getFollowing);
 
 usersRouter.post('/follow/:userId', authenticate, authControllers.followUser);
 
+usersRouter.delete(
+  '/unfollow/:userId',
+  authenticate,
+  authControllers.unfollowUser
+);
+
 export default usersRouter;
