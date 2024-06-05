@@ -1,4 +1,4 @@
-import * as usersService from '../services/usersServices.js';
+import * as usersServices from '../services/usersServices.js';
 import ctrlWrapper from '../decorators/ctrlWrapper.js';
 import HttpError from '../helpers/HttpError.js';
 import gravatar from 'gravatar';
@@ -11,7 +11,7 @@ import Jimp from 'jimp';
 
 const signUp = async (req, res, next) => {
   const { email } = req.body;
-  const user = await usersService.findUser({ email });
+  const user = await usersServices.findUser({ email });
   if (user) {
     throw HttpError(409, 'Email already use');
   }
@@ -26,7 +26,7 @@ const signUp = async (req, res, next) => {
     true
   );
 
-  const newUser = await usersService.saveUser({ ...req.body, avatarURL });
+  const newUser = await usersServices.saveUser({ ...req.body, avatarURL });
   res.status(201).json({
     user: {
       name: newUser.name,
@@ -37,7 +37,7 @@ const signUp = async (req, res, next) => {
 
 const signIn = async (req, res, next) => {
   const { email, password } = req.body;
-  const user = await usersService.findUser({ email });
+  const user = await usersServices.findUser({ email });
 
   if (!user) {
     throw HttpError(401, 'Email or password invalid');
@@ -58,7 +58,7 @@ const signIn = async (req, res, next) => {
   };
 
   const token = createToken(payload);
-  await usersService.updateUser({ _id: id }, { token });
+  await usersServices.updateUser({ _id: id }, { token });
 
   res.json({
     token,
@@ -71,11 +71,14 @@ const signIn = async (req, res, next) => {
 
 const signOut = async (req, res, next) => {
   const { _id } = req.user;
-  await usersService.updateUser({ _id }, { token: null });
+  await usersServices.updateUser({ _id }, { token: null });
   res.status(204).json();
 };
 
-const getCurrent = (req, res) => {};
+const getCurrent = (req, res) => {
+  const { name, email, avatarURL } = req.user;
+  res.status(200).json({ name, email, avatarURL });
+};
 
 const updateAvatar = async (req, res) => {
   const { _id } = req.user;
@@ -88,10 +91,7 @@ const updateAvatar = async (req, res) => {
       folder: 'avatars',
     });
 
-    await userServices.updateUser(
-      { _id},
-      { avatarURL }
-    );
+    await usersServices.updateUser({ _id }, { avatarURL });
 
     res.status(200).json({ avatarURL });
   } catch (err) {

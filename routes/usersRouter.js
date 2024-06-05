@@ -27,6 +27,11 @@ usersRouter.get('/current', authenticate, authControllers.getCurrent);
 
 usersRouter.post('/signout', authenticate, authControllers.signOut);
 
-usersRouter.patch('/avatars', authenticate, upload.single("avatar"), authControllers.updateAvatar);
+usersRouter.patch(
+  '/avatars',
+  authenticate,
+  upload.single('avatar'),
+  authControllers.updateAvatar
+);
 
 export default usersRouter;
