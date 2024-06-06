@@ -20,6 +20,16 @@ const userSchema = new Schema(
     avatarURL: {
       type: String,
     },
+    followers: {
+      type: [Schema.Types.ObjectId],
+      ref: 'user',
+      default: [],
+    },
+    following: {
+      type: [Schema.Types.ObjectId],
+      ref: 'user',
+      default: [],
+    },
     token: {
       type: String,
     },
