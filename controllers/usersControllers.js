@@ -1,4 +1,4 @@
-import * as usersService from '../services/usersServices.js';
+import * as usersServices from '../services/usersServices.js';
 import ctrlWrapper from '../decorators/ctrlWrapper.js';
 import HttpError from '../helpers/HttpError.js';
 import gravatar from 'gravatar';
@@ -8,10 +8,11 @@ import cloudinary from '../helpers/cloudinary.js';
 import fs from 'fs/promises';
 import path from 'path';
 import Jimp from 'jimp';
+import { log } from 'console';
 
-const signUp = async (req, res, next) => {
+const signUp = async (req, res) => {
   const { email } = req.body;
-  const user = await usersService.findUser({ email });
+  const user = await usersServices.findUser({ email });
   if (user) {
     throw HttpError(409, 'Email already use');
   }
@@ -26,7 +27,7 @@ const signUp = async (req, res, next) => {
     true
   );
 
-  const newUser = await usersService.saveUser({ ...req.body, avatarURL });
+  const newUser = await usersServices.saveUser({ ...req.body, avatarURL });
   res.status(201).json({
     user: {
       name: newUser.name,
@@ -35,9 +36,9 @@ const signUp = async (req, res, next) => {
   });
 };
 
-const signIn = async (req, res, next) => {
+const signIn = async (req, res) => {
   const { email, password } = req.body;
-  const user = await usersService.findUser({ email });
+  const user = await usersServices.findUser({ email });
 
   if (!user) {
     throw HttpError(401, 'Email or password invalid');
@@ -58,7 +59,7 @@ const signIn = async (req, res, next) => {
   };
 
   const token = createToken(payload);
-  await usersService.updateUser({ _id: id }, { token });
+  await usersServices.updateUser({ _id: id }, { token });
 
   res.json({
     token,
@@ -69,13 +70,16 @@ const signIn = async (req, res, next) => {
   });
 };
 
-const signOut = async (req, res, next) => {
+const signOut = async (req, res) => {
   const { _id } = req.user;
-  await usersService.updateUser({ _id }, { token: null });
+  await usersServices.updateUser({ _id }, { token: null });
   res.status(204).json();
 };
 
-const getCurrent = (req, res) => {};
+const getCurrent = (req, res) => {
+  const { name, email, avatarURL, followers, following } = req.user;
+  res.status(200).json({ name, email, avatarURL, followers, following });
+};
 
 const updateAvatar = async (req, res) => {
   const { _id } = req.user;
@@ -88,10 +92,7 @@ const updateAvatar = async (req, res) => {
       folder: 'avatars',
     });
 
-    await userServices.updateUser(
-      { _id},
-      { avatarURL }
-    );
+    await usersServices.updateUser({ _id }, { avatarURL });
 
     res.status(200).json({ avatarURL });
   } catch (err) {
@@ -101,10 +102,92 @@ const updateAvatar = async (req, res) => {
   }
 };
 
+const getFollowers = async (req, res) => {
+  const { _id } = req.user;
+  const user = await usersServices.findUser({ _id }).populate('followers');
+  if (!user) {
+    throw HttpError(404, 'User not found');
+  }
+
+  res.status(200).json({ followers: user.followers });
+};
+
+const getFollowing = async (req, res) => {
+  const { _id } = req.user;
+  const user = await usersServices.findUser({ _id }).populate('following');
+  if (!user) {
+    throw HttpError(404, 'User not found');
+  }
+
+  res.status(200).json({ following: user.following });
+};
+
+const followUser = async (req, res) => {
+  const { _id } = req.user;
+  const { userId } = req.params;
+  const currentUser = await usersServices.findUser({ _id });
+  if (!currentUser) {
+    throw HttpError(404, 'User not found');
+  }
+
+  const userToFollow = await usersServices.findUser({ _id: userId });
+  if (!userToFollow) {
+    throw HttpError(404, 'User to follow not found');
+  }
+
+  if (currentUser.following.includes(userId)) {
+    throw HttpError(400, 'User is already being followed');
+  }
+
+  currentUser.following.push(userId);
+  await currentUser.save();
+
+  userToFollow.followers.push(_id);
+  await userToFollow.save();
+
+  res.status(200).json({ message: 'User followed successfully' });
+};
+
+const unfollowUser = async (req, res) => {
+  const { _id } = req.user;
+  const { userId } = req.params;
+
+  const currentUser = await usersServices.findUser({ _id });
+  if (!currentUser) {
+    throw HttpError(404, 'Current user not found');
+  }
+
+  const userToUnfollow = await usersServices.findUser({ _id: userId });
+  if (!userToUnfollow) {
+    throw HttpError(404, 'User to unfollow not found');
+  }
+
+  if (!currentUser.following.includes(userId)) {
+    throw HttpError(400, 'User is not being followed');
+  }
+
+  currentUser.following = currentUser.following.filter(
+    id => id.toString() !== userId
+  );
+  await currentUser.save();
+
+  userToUnfollow.followers = userToUnfollow.followers.filter(
+    id => id.toString() !== _id.toString()
+  );
+
+  await userToUnfollow.save();
+
+  res.status(200).json({ message: 'User unfollowed successfully' });
+};
+
 export default {
   signUp: ctrlWrapper(signUp),
   signIn: ctrlWrapper(signIn),
   signOut: ctrlWrapper(signOut),
   getCurrent: ctrlWrapper(getCurrent),
   updateAvatar: ctrlWrapper(updateAvatar),
+  getFollowers: ctrlWrapper(getFollowers),
+  getFollowing: ctrlWrapper(getFollowing),
+  followUser: ctrlWrapper(followUser),
+  unfollowUser: ctrlWrapper(unfollowUser),
 };
