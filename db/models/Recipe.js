@@ -1,24 +1,53 @@
-import { Schema, model } from "mongoose";
-import { handleSaveError, setUpdateSettings } from "./hooks.js";
+import { Schema, model } from 'mongoose';
+import { handleSaveError, setUpdateSettings } from './hooks.js';
 
-const recipesSchema = new Schema(
+const ingredientsToRecipeSchema = new Schema(
   {
-    owner: {
+    id: {
       type: Schema.Types.ObjectId,
-      ref: "user",
+      ref: 'ingredient',
+      required: true,
+    },
+    measure: {
+      type: String,
+      required: true,
     },
   },
-  {
-    versionKey: false,
-  },
+  { _id: false }
 );
 
-recipesSchema.post("save", handleSaveError);
+const recipeSchema = new Schema(
+  {
+    title: { type: String, required: [true, 'Title is required'] },
+    // Ask for mentor about area
+    area: { type: String, required: [true, 'Area is required'] },
+    instructions: {
+      type: String,
+      required: [true, 'Instructions is required'],
+    },
+    description: { type: String, required: [true, 'Description is required'] },
+    thumb: { type: String },
+    time: { type: String, required: [true, 'Coocking time is required'] },
+    owner: {
+      type: Schema.Types.ObjectId,
+      ref: 'user',
+    },
+    category: {
+      type: String,
+      required: [true, 'Category is required'],
+    },
+    // In question
+    ingredients: [ingredientsToRecipeSchema],
+  },
+  { versionKey: false, timestamps: true }
+);
 
-recipesSchema.pre("findOneAndUpdate", setUpdateSettings);
+recipeSchema.post('save', handleSaveError);
 
-recipesSchema.post("findOneAndUpdate", handleSaveError);
+recipeSchema.pre('findOneAndUpdate', setUpdateSettings);
 
-const Recipe = model("contact", recipesSchema);
+recipeSchema.post('findOneAndUpdate', handleSaveError);
+
+const Recipe = model('recipe', recipeSchema);
 
 export default Recipe;
