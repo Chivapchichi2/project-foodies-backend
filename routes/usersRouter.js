@@ -27,6 +27,23 @@ usersRouter.get('/current', authenticate, authControllers.getCurrent);
 
 usersRouter.post('/signout', authenticate, authControllers.signOut);
 
-usersRouter.patch('/avatars', authenticate, upload.single("avatar"), authControllers.updateAvatar);
+usersRouter.patch(
+  '/avatars',
+  authenticate,
+  upload.single('avatar'),
+  authControllers.updateAvatar
+);
+
+usersRouter.get('/followers', authenticate, authControllers.getFollowers);
+
+usersRouter.get('/following', authenticate, authControllers.getFollowing);
+
+usersRouter.post('/follow/:userId', authenticate, authControllers.followUser);
+
+usersRouter.delete(
+  '/unfollow/:userId',
+  authenticate,
+  authControllers.unfollowUser
+);
 
 export default usersRouter;
