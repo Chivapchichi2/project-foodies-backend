@@ -45,5 +45,10 @@ usersRouter.delete(
   authenticate,
   authControllers.unfollowUser
 );
+usersRouter.get(
+  '/details/:userId',
+  authenticate,
+  authControllers.getUserDetails
+);
 
 export default usersRouter;
