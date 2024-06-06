@@ -6,11 +6,11 @@ const ingredientsToRecipeSchema = new Schema(
     id: {
       type: Schema.Types.ObjectId,
       ref: 'ingredient',
-      required: true,
+      required: [true, 'Ingredients is required'],
     },
     measure: {
       type: String,
-      required: true,
+      required: [true, 'Measure is required'],
     },
   },
   { _id: false }
@@ -19,7 +19,6 @@ const ingredientsToRecipeSchema = new Schema(
 const recipeSchema = new Schema(
   {
     title: { type: String, required: [true, 'Title is required'] },
-    // Ask for mentor about area
     area: { type: String, required: [true, 'Area is required'] },
     instructions: {
       type: String,
@@ -36,7 +35,6 @@ const recipeSchema = new Schema(
       type: String,
       required: [true, 'Category is required'],
     },
-    // In question
     ingredients: [ingredientsToRecipeSchema],
   },
   { versionKey: false, timestamps: true }

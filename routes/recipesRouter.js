@@ -5,6 +5,10 @@ import validateBody from '../decorators/validateBody.js';
 import isValidId from '../middlewares/isValidId.js';
 import authenticate from '../middlewares/authenticate.js';
 import upload from '../middlewares/upload.js';
+import {
+  createRecipeSchema,
+  favoriteRecipe,
+} from '../schemas/recipesSchemas.js';
 
 const recipesRouter = express.Router();
 
@@ -12,51 +16,50 @@ recipesRouter.get('/', recipesControllers.getRecipesByFilter);
 
 recipesRouter.post(
   '/',
-  // authenticate,
-  // isEmptyBody,
-  // validateBody, // To do schema
+  authenticate,
   upload.single('thumb'),
+  isEmptyBody,
+  validateBody(createRecipeSchema),
   recipesControllers.addRecipe
 );
 
-recipesRouter.delete('/', authenticate, recipesControllers.removeRecipe);
-
-// recipesRouter.get('/favorites', recipesControllers.removeRecipe);
-
-recipesRouter.get('/popular', recipesControllers.getPopularRecipes);
-
-// Not tested
 recipesRouter.get(
   '/myrecipes',
-  // authenticate,
+  authenticate,
   recipesControllers.getRecipesFromUser
 );
 
-// Not tested
 recipesRouter.get(
   '/myrecipes/favorites',
-  // authenticate,
+  authenticate,
   recipesControllers.getMyFavoriteRecipe
 );
 
 recipesRouter.post(
   '/favorites',
-  // authenticate,
+  authenticate,
   isEmptyBody,
-  // validateBody, // To do schema
+  validateBody(favoriteRecipe),
   recipesControllers.addFavoriteRecipe
 );
 
 recipesRouter.delete(
   '/favorites',
-  // authenticate,
+  authenticate,
   isEmptyBody,
-  // validateBody, // To do schema
+  validateBody(favoriteRecipe),
   recipesControllers.removeFavoriteRecipe
 );
 
 recipesRouter.get('/favorites', recipesControllers.getAllFavoriteRecipe);
 
 recipesRouter.get('/:id', isValidId, recipesControllers.getOneRecipe);
+
+recipesRouter.delete(
+  '/:id',
+  isValidId,
+  authenticate,
+  recipesControllers.removeRecipe
+);
 
 export default recipesRouter;
