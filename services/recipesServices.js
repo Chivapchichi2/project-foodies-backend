@@ -9,7 +9,6 @@ export const listRecipes = async (search = {}) => {
     '_id name avatar email'
   );
 
-  console.log(total, search);
   return {
     total,
     data,
