@@ -1,4 +1,5 @@
 import * as usersServices from '../services/usersServices.js';
+import * as recipesServices from '../services/recipesServices.js';
 import ctrlWrapper from '../decorators/ctrlWrapper.js';
 import HttpError from '../helpers/HttpError.js';
 import gravatar from 'gravatar';
@@ -92,7 +93,7 @@ const updateAvatar = async (req, res) => {
       folder: 'avatars',
     });
 
-    await usersService.updateUser({ _id }, { avatarURL });
+    await usersServices.updateUser({ _id }, { avatarURL });
 
     res.status(200).json({ avatarURL });
   } catch (err) {
@@ -180,6 +181,47 @@ const unfollowUser = async (req, res) => {
   res.status(200).json({ message: 'User unfollowed successfully' });
 };
 
+const getUserDetails = async (req, res) => {
+  const { userId } = req.params;
+  const { _id } = req.user;
+
+  const user = await usersServices.findUser({ _id: userId });
+  if (!user) {
+    throw HttpError(404, 'User not found');
+  }
+
+  const isAuthorizedUser = _id.toString() === userId;
+
+  const createdRecipesCount = await recipesServices.listRecipes({ userId });
+  console.log('createdRecipesCount', createdRecipesCount);
+
+  if (isAuthorizedUser) {
+    const favoriteRecipesCount = await recipesServices.getMyFavoriteRecipe({
+      userId,
+    });
+    console.log('favoriteRecipesCount', favoriteRecipesCount);
+    const userDetails = {
+      avatar: user.avatarURL,
+      name: user.name,
+      email: user.email,
+      createdRecipesCount,
+      favoriteRecipesCount,
+      followersCount: user.followers.length,
+      followingCount: user.following.length,
+    };
+    res.status(200).json(userDetails);
+  } else {
+    const userDetails = {
+      avatar: user.avatarURL,
+      name: user.name,
+      email: user.email,
+      createdRecipesCount,
+      followersCount: user.followers.length,
+    };
+    res.status(200).json(userDetails);
+  }
+};
+
 export default {
   signUp: ctrlWrapper(signUp),
   signIn: ctrlWrapper(signIn),
@@ -190,4 +232,5 @@ export default {
   getFollowing: ctrlWrapper(getFollowing),
   followUser: ctrlWrapper(followUser),
   unfollowUser: ctrlWrapper(unfollowUser),
+  getUserDetails: ctrlWrapper(getUserDetails),
 };
