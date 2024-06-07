@@ -17,35 +17,26 @@ const getRecipesByFilter = async (req, res, next) => {
   const fields = '-createdAt -updatedAt';
   const settings = { skip, limit };
 
-  const result = await recipesService.listRecipes({
+  const { total, data } = await recipesService.listRecipes({
     filter,
     fields,
     settings,
   });
 
-  res.json(result);
+  const totalPages = Math.ceil(total / limit);
+
+  res.json({ total, currentPage: page, totalPages, data });
 };
 
 const getOneRecipe = async (req, res, next) => {
   const { id } = req.params;
   const result = await recipesService.getRecipeById(id);
   handleResult(result);
-  res.json(result);
-};
-
-const getPopularRecipes = async (req, res, next) => {
-  // Logic ???
-  const fields = '-createdAt -updatedAt';
-  const result = await recipesService.listRecipes({
-    filter: {},
-    fields,
-    settings,
-  });
+  res.json({ data: result });
 };
 
 const getRecipesFromUser = async (req, res, next) => {
   const { _id: owner } = req.user;
-  // const owner = '64c8d958249fae54bae90bb9';
   const { page = 1, limit = 9 } = req.query;
   const skip = (page - 1) * limit;
 
@@ -53,35 +44,48 @@ const getRecipesFromUser = async (req, res, next) => {
   const fields = '-createdAt -updatedAt';
   const settings = { skip, limit };
 
-  const result = await recipesService.listRecipes({
+  const { total, data } = await recipesService.listRecipes({
     filter,
     fields,
     settings,
   });
-  res.json(result);
+
+  const totalPages = Math.ceil(total / limit);
+
+  res.json({ total, currentPage: page, totalPages, data });
 };
 
 const addRecipe = async (req, res, next) => {
-  // const { _id: owner } = req.user;
-  const owner = '64c8d958249fae54bae90bb8';
-  const { path } = req.file;
+  const { _id: owner } = req.user;
+  const path = req.file;
 
   try {
-    const { url: thumb } = await cloudinary.uploader.upload(path, {
-      folder: 'recipes',
-    });
+    if (path) {
+      const { url: thumb } = await cloudinary.uploader.upload(path, {
+        folder: 'recipes',
+      });
+
+      const newRecipe = await recipesService.addRecipe({
+        ...req.body,
+        owner,
+        thumb,
+      });
+
+      return res.status(201).json({ data: newRecipe });
+    }
 
     const newRecipe = await recipesService.addRecipe({
       ...req.body,
       owner,
-      thumb,
     });
 
-    res.status(201).json(newRecipe);
+    res.status(201).json({ data: newRecipe });
   } catch (err) {
     throw HttpError(400, err.message);
   } finally {
-    await fs.unlink(path);
+    if (path) {
+      await fs.unlink(path);
+    }
   }
 };
 
@@ -92,61 +96,80 @@ const removeRecipe = async (req, res, next) => {
   const result = await recipesService.removeRecipe(id, owner);
   handleResult(result);
 
-  res.json(result);
+  res.json({ data: result });
 };
 
 const addFavoriteRecipe = async (req, res, next) => {
-  // const { _id: user } = req.user;
-  const user = '64c8d958249fae54bae90bb8';
-
+  const { _id: user } = req.user;
   const { recipe } = req.body;
+  const { total: isFavorite } = await recipesService.getMyFavoriteRecipe({
+    filter: { user, recipe },
+  });
+
+  const isRecipe = await recipesService.getRecipeById(recipe);
+  if (!isRecipe) {
+    throw HttpError(404, 'Recipe not found');
+  }
+
+  if (isFavorite) {
+    throw HttpError(409, 'Recipe is already in favorites');
+  }
 
   const result = await recipesService.addFavoriteRecipe(recipe, user);
-  handleResult(result);
 
-  res.json(result);
+  res.json({ data: result });
 };
 
 const removeFavoriteRecipe = async (req, res, next) => {
-  // const { _id: user } = req.user;
-  const user = '64c8d958249fae54bae90bb8';
+  const { _id: user } = req.user;
 
   const { recipe } = req.body;
 
   const result = await recipesService.removeFavoriteRecipe(recipe, user);
   handleResult(result);
 
-  res.json(result);
+  res.json({ data: result });
 };
 
 const getAllFavoriteRecipe = async (req, res, next) => {
-  const result = await recipesService.getAllFavoriteRecipe();
-  res.json(result);
+  let { page = 1, limit = 10 } = req.query;
+  page = parseInt(page, 10);
+  limit = parseInt(limit, 10);
+  const skip = (page - 1) * limit;
+
+  const { total, data } = await recipesService.getAllFavoriteRecipe(
+    skip,
+    limit
+  );
+
+  const totalPages = Math.ceil(total / limit);
+
+  res.json({ total, currentPage: page, totalPages, data });
 };
 
 const getMyFavoriteRecipe = async (req, res, next) => {
-  // const { _id: user } = req.user;
-  const user = '64c8d958249fae54bae90bb8';
-  const { page = 1, limit = 12 } = req.query;
+  const { _id: user } = req.user;
+  const { page = 1, limit = 10 } = req.query;
   const skip = (page - 1) * limit;
   const filter = { user };
 
   const fields = '-createdAt -updatedAt -user';
   const settings = { skip, limit };
 
-  const result = await recipesService.getMyFavoriteRecipe({
+  const { total, data } = await recipesService.getMyFavoriteRecipe({
     filter,
     fields,
     settings,
   });
 
-  res.json(result);
+  const totalPages = Math.ceil(total / limit);
+
+  res.json({ total, currentPage: page, totalPages, data });
 };
 
 export default {
   getRecipesByFilter: ctrlWrapper(getRecipesByFilter),
   getOneRecipe: ctrlWrapper(getOneRecipe),
-  getPopularRecipes: ctrlWrapper(getPopularRecipes),
   getRecipesFromUser: ctrlWrapper(getRecipesFromUser),
   addRecipe: ctrlWrapper(addRecipe),
   removeRecipe: ctrlWrapper(removeRecipe),

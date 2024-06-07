@@ -1,16 +1,26 @@
 import Favorite from '../db/models/Favorite.js';
 import Recipe from '../db/models/Recipe.js';
 
-export const listRecipes = (search = {}) => {
+export const listRecipes = async (search = {}) => {
   const { filter = {}, fields = '', settings = {} } = search;
-  return Recipe.find(filter, fields, settings).populate(
+  const total = await Recipe.countDocuments(filter);
+  const data = await Recipe.find(filter, fields, settings).populate(
     'owner',
-    'username email'
+    '_id name avatar email'
   );
+
+  console.log(total, search);
+  return {
+    total,
+    data,
+  };
 };
 
 export const getRecipeById = recipetId => {
-  return Recipe.findOne({ _id: recipetId });
+  return Recipe.findOne({ _id: recipetId }).populate(
+    'owner',
+    '_id name avatar email'
+  );
 };
 
 export const removeRecipe = (recipeId, owner) => {
@@ -29,13 +39,22 @@ export const removeFavoriteRecipe = (recipeId, userId) => {
   return Favorite.findOneAndDelete({ recipe: recipeId, user: userId });
 };
 
-export const getMyFavoriteRecipe = (search = {}) => {
+export const getMyFavoriteRecipe = async (search = {}) => {
   const { filter = {}, fields = '', settings = {} } = search;
-  return Favorite.find(filter, fields, settings).populate('recipe');
+
+  const total = await Favorite.find(filter, fields, settings).countDocuments(
+    filter
+  );
+  const data = await Favorite.find(filter, fields, settings).populate('recipe');
+  return { total, data };
 };
 
-export const getAllFavoriteRecipe = () => {
-  return Favorite.aggregate([
+export const getAllFavoriteRecipe = async (skip, limit) => {
+  const total = await Favorite.distinct('recipe').then(
+    uniqueRecipes => uniqueRecipes.length
+  );
+
+  const data = await Favorite.aggregate([
     {
       $group: {
         _id: '$recipe',
@@ -46,7 +65,10 @@ export const getAllFavoriteRecipe = () => {
       $sort: { count: -1 },
     },
     {
-      $limit: 10,
+      $skip: skip,
+    },
+    {
+      $limit: limit,
     },
     {
       $lookup: {
@@ -67,6 +89,8 @@ export const getAllFavoriteRecipe = () => {
       },
     },
   ]);
+
+  return { total, data };
 };
 
 export const updateRecipe = (recipeId, owner, data) => {
