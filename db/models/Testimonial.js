@@ -2,7 +2,10 @@ import { Schema, model } from 'mongoose';
 
 const testimonialSchema = new Schema(
   {
-    owner: String,
+    owner: {
+      type: Schema.Types.ObjectId,
+      ref: 'user',
+    },
     testimonial: String,
   },
   { versionKey: false, timestamps: true }
