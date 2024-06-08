@@ -34,6 +34,15 @@ const areasRouter = express.Router();
  *                     example: Ukrainian
  *       500:
  *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Error message
+ *                   example: "Internal server error"
  */
 areasRouter.get('/', areasControllers.getAreas);
 
