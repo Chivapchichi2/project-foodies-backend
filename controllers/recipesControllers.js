@@ -57,7 +57,10 @@ const getRecipesFromUser = async (req, res, next) => {
 
 const addRecipe = async (req, res, next) => {
   const { _id: owner } = req.user;
-  const path = req.file;
+  let path;
+  if (req.file) {
+    path = req.file.path;
+  }
 
   try {
     if (path) {
