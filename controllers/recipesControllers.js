@@ -5,7 +5,7 @@ import handleResult from '../helpers/handleResult.js';
 import cloudinary from '../helpers/cloudinary.js';
 import fs from 'fs/promises';
 
-const getRecipesByFilter = async (req, res, next) => {
+const getRecipesByFilter = async (req, res) => {
   const { category, ingredients, area, page = 1, limit = 12 } = req.query;
   const skip = (page - 1) * limit;
   const filter = {};
@@ -28,14 +28,14 @@ const getRecipesByFilter = async (req, res, next) => {
   res.json({ total, currentPage: page, totalPages, data });
 };
 
-const getOneRecipe = async (req, res, next) => {
+const getOneRecipe = async (req, res) => {
   const { id } = req.params;
   const result = await recipesService.getRecipeById(id);
   handleResult(result);
   res.json({ data: result });
 };
 
-const getRecipesFromUser = async (req, res, next) => {
+const getRecipesFromUser = async (req, res) => {
   const { _id: owner } = req.user;
   const { page = 1, limit = 9 } = req.query;
   const skip = (page - 1) * limit;
@@ -55,7 +55,7 @@ const getRecipesFromUser = async (req, res, next) => {
   res.json({ total, currentPage: page, totalPages, data });
 };
 
-const addRecipe = async (req, res, next) => {
+const addRecipe = async (req, res) => {
   const { _id: owner } = req.user;
   let path;
   if (req.file) {
@@ -92,7 +92,7 @@ const addRecipe = async (req, res, next) => {
   }
 };
 
-const removeRecipe = async (req, res, next) => {
+const removeRecipe = async (req, res) => {
   const { _id: owner } = req.user;
   const { id } = req.params;
 
@@ -102,7 +102,7 @@ const removeRecipe = async (req, res, next) => {
   res.json({ data: result });
 };
 
-const addFavoriteRecipe = async (req, res, next) => {
+const addFavoriteRecipe = async (req, res) => {
   const { _id: user } = req.user;
   const { recipe } = req.body;
   const { total: isFavorite } = await recipesService.getMyFavoriteRecipe({
@@ -123,7 +123,7 @@ const addFavoriteRecipe = async (req, res, next) => {
   res.json({ data: result });
 };
 
-const removeFavoriteRecipe = async (req, res, next) => {
+const removeFavoriteRecipe = async (req, res) => {
   const { _id: user } = req.user;
 
   const { recipe } = req.body;
@@ -134,7 +134,7 @@ const removeFavoriteRecipe = async (req, res, next) => {
   res.json({ data: result });
 };
 
-const getAllFavoriteRecipe = async (req, res, next) => {
+const getAllFavoriteRecipe = async (req, res) => {
   let { page = 1, limit = 10 } = req.query;
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
@@ -150,7 +150,7 @@ const getAllFavoriteRecipe = async (req, res, next) => {
   res.json({ total, currentPage: page, totalPages, data });
 };
 
-const getMyFavoriteRecipe = async (req, res, next) => {
+const getMyFavoriteRecipe = async (req, res) => {
   const { _id: user } = req.user;
   const { page = 1, limit = 10 } = req.query;
   const skip = (page - 1) * limit;

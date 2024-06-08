@@ -14,25 +14,17 @@ const authenticate = async (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.decode(token, { complete: true });
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const now = Math.floor(Date.now() / 1000);
 
-    if (!decoded) {
-      throw HttpError(401, 'Token is invalid');
+    if (decoded.exp < now) {
+      await usersServices.updateUser({ _id: decoded.id }, { token: null });
+      return next(HttpError(401, 'Token expired. Please log in again.'));
     }
 
-    const now = Math.floor(Date.now() / 1000);
-    const userId = decoded.payload.id;
-
-    const user = await usersServices.findUser({ _id: userId });
-
+    const user = await usersServices.findUser({ _id: decoded.id });
     if (!user) {
       return next(HttpError(401, 'User not found'));
-    }
-
-    if (decoded.payload.exp < now) {
-      console.log('expired token');
-      await usersServices.updateUser({ _id: userId }, { token: null });
-      return next(HttpError(401, 'Token expired. Please log in again.'));
     }
 
     if (!user.token) {
@@ -42,7 +34,10 @@ const authenticate = async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
-    next(HttpError(401, error.message));
+    if (error.name === 'JsonWebTokenError') {
+      return next(HttpError(401, 'Token is invalid'));
+    }
+    return next(HttpError(401, error.message));
   }
 };
 

@@ -7,9 +7,7 @@ import compareHash from '../helpers/compareHash.js';
 import { createToken } from '../helpers/jwt.js';
 import cloudinary from '../helpers/cloudinary.js';
 import fs from 'fs/promises';
-import path from 'path';
 import Jimp from 'jimp';
-import { log } from 'console';
 
 const signUp = async (req, res) => {
   const { email } = req.body;

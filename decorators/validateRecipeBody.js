@@ -4,7 +4,7 @@ import { getAllCategories } from '../services/categoriesServices.js';
 import { getAllAreas } from '../services/areasServices.js';
 
 const validateRecipeBody = schema => {
-  const func = async (req, _, next) => {
+  return async (req, _, next) => {
     const arrayIngredients = [];
     const { ingredients, category, area } = req.body;
 
@@ -51,8 +51,6 @@ const validateRecipeBody = schema => {
     }
     next();
   };
-
-  return func;
 };
 
 export default validateRecipeBody;
