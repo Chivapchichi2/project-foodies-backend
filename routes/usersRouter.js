@@ -6,6 +6,7 @@ import validateBody from '../decorators/validateBody.js';
 import { userSignupSchema, userSigninSchema } from '../schemas/usersSchemas.js';
 import isValidId from '../middlewares/isValidId.js';
 import upload from '../middlewares/upload.js';
+import isFilePresent from '../middlewares/isFilePresent.js';
 
 const usersRouter = express.Router();
 
@@ -31,6 +32,7 @@ usersRouter.patch(
   '/avatars',
   authenticate,
   upload.single('avatar'),
+  isFilePresent,
   authControllers.updateAvatar
 );
 
@@ -38,16 +40,24 @@ usersRouter.get('/followers', authenticate, authControllers.getFollowers);
 
 usersRouter.get('/following', authenticate, authControllers.getFollowing);
 
-usersRouter.post('/follow/:userId', authenticate, authControllers.followUser);
+usersRouter.post(
+  '/follow/:userId',
+  authenticate,
+  isValidId,
+  authControllers.followUser
+);
 
 usersRouter.delete(
   '/unfollow/:userId',
   authenticate,
+  isValidId,
   authControllers.unfollowUser
 );
+
 usersRouter.get(
   '/details/:userId',
   authenticate,
+  isValidId,
   authControllers.getUserDetails
 );
 

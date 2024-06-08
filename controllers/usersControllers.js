@@ -27,10 +27,19 @@ const signUp = async (req, res) => {
   );
 
   const newUser = await usersServices.saveUser({ ...req.body, avatarURL });
+
+  const { _id: id } = newUser;
+  const payload = {
+    id,
+  };
+  const token = createToken(payload);
+
+  const updatedUser = await usersServices.updateUser({ _id: id }, { token });
+
   res.status(201).json({
     user: {
-      name: newUser.name,
-      email: newUser.email,
+      token: updatedUser.token,
+      user: { name: updatedUser.name, email: updatedUser.email },
     },
   });
 };
@@ -46,10 +55,6 @@ const signIn = async (req, res) => {
 
   if (!comparePass) {
     throw HttpError(401, 'Email or password invalid');
-  }
-
-  if (user.token) {
-    throw HttpError(403, 'User already logged in');
   }
 
   const { _id: id } = user;
@@ -190,14 +195,14 @@ const getUserDetails = async (req, res) => {
 
   const isAuthorizedUser = _id.toString() === userId;
 
-  const createdRecipesCount = await recipesServices.listRecipes({ userId });
-  console.log('createdRecipesCount', createdRecipesCount);
+  const createdRecipesCount = await recipesServices.listRecipes({
+    filter: { owner: userId },
+  });
 
   if (isAuthorizedUser) {
     const favoriteRecipesCount = await recipesServices.getMyFavoriteRecipe({
       userId,
     });
-    console.log('favoriteRecipesCount', favoriteRecipesCount);
     const userDetails = {
       avatar: user.avatarURL,
       name: user.name,
