@@ -15,8 +15,7 @@ const options = {
     },
     servers: [
       {
-        // url: 'https://foodies-ua-1497a9d7b69f.herokuapp.com/',
-        url: 'http://localhost:3000/',
+        url: 'https://foodies-ua-1497a9d7b69f.herokuapp.com/',
       },
     ],
   },
