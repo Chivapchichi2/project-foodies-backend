@@ -11,6 +11,8 @@ import {
   ingredientsRouter,
   testimonialsRouter,
 } from './routes/index.js';
+import swaggerUi from 'swagger-ui-express';
+import swaggerSpec from './swaggerConfig.js';
 
 const app = express();
 
@@ -19,6 +21,7 @@ app.use(morgan('tiny'));
 app.use(cors());
 app.use(express.json());
 
+app.use('/api', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/api/users', usersRouter);
 app.use('/api/recipes', recipesRouter);
 app.use('/api/categories', categoriesRouter);
