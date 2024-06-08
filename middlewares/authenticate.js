@@ -1,4 +1,4 @@
-import HttpError from '../helpers/httpError.js';
+import HttpError from '../helpers/HttpError.js';
 import * as usersServices from '../services/usersServices.js';
 import jwt from 'jsonwebtoken';
 

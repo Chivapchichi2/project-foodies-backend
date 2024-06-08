@@ -1,4 +1,4 @@
-import HttpError from '../helpers/httpError.js';
+import HttpError from '../helpers/HttpError.js';
 import { getAllIngredients } from '../services/ingredientsServices.js';
 import { getAllCategories } from '../services/categoriesServices.js';
 import { getAllAreas } from '../services/areasServices.js';

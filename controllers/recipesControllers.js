@@ -1,6 +1,6 @@
 import * as recipesService from '../services/recipesServices.js';
 import ctrlWrapper from '../decorators/ctrlWrapper.js';
-import HttpError from '../helpers/httpError.js';
+import HttpError from '../helpers/HttpError.js';
 import handleResult from '../helpers/handleResult.js';
 import cloudinary from '../helpers/cloudinary.js';
 import fs from 'fs/promises';
