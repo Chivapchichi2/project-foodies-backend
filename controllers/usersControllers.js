@@ -1,7 +1,7 @@
 import * as usersServices from '../services/usersServices.js';
 import * as recipesServices from '../services/recipesServices.js';
 import ctrlWrapper from '../decorators/ctrlWrapper.js';
-import HttpError from '../helpers/HttpError.js';
+import HttpError from '../helpers/httpError.js';
 import gravatar from 'gravatar';
 import compareHash from '../helpers/compareHash.js';
 import { createToken } from '../helpers/jwt.js';

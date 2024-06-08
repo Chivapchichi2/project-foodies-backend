@@ -1,4 +1,4 @@
-import HttpError from './HttpError.js';
+import HttpError from './httpError.js';
 
 const handleResult = result => {
   if (!result || result.length === 0) {
