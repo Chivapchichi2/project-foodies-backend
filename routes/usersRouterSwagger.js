@@ -108,7 +108,7 @@
  *             data:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/RecipeSummary'
+ *                 $ref: '#/components/schemas/Recipe'
  *           description: User's created recipes count
  *           example:
  *             total: 0
@@ -123,7 +123,7 @@
  *             data:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/RecipeSummary'
+ *                 $ref: '#/components/schemas/Recipe'
  *           description: User's favorite recipes count
  *           example:
  *             total: 0
@@ -162,7 +162,7 @@
  *             data:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/RecipeSummary'
+ *                 $ref: '#/components/schemas/Recipe'
  *           description: User's created recipes count
  *           example:
  *             total: 0
@@ -172,7 +172,7 @@
  *           description: Total number of followers of the user
  *           example: 0
  *       description: User details for other users
- *     RecipeSummary:
+ *     Recipe:
  *       type: object
  *       properties:
  *         _id:
@@ -243,7 +243,7 @@
  *           type: string
  *           description: Date and time the recipe was last updated
  *           example: "2023-10-18T09:18:18.842Z"
- *       description: Summary of a recipe *
+ *       description: Summary of a recipe
  */
 
 /**

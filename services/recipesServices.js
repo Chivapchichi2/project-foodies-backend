@@ -4,10 +4,22 @@ import Recipe from '../db/models/Recipe.js';
 export const listRecipes = async (search = {}) => {
   const { filter = {}, fields = '', settings = {} } = search;
   const total = await Recipe.countDocuments(filter);
-  const data = await Recipe.find(filter, fields, settings).populate(
-    'owner',
-    '_id name avatar email'
-  );
+  let data = await Recipe.find(filter, fields, settings)
+    .populate('owner', '_id name avatar email')
+    .populate({
+      path: 'ingredients.id',
+      select: 'name desc img',
+    });
+
+  data = data.map(recipe => {
+    const ingredients = recipe.ingredients.map(ingredient => {
+      return {
+        ingredient: ingredient.id,
+        measure: ingredient.measure,
+      };
+    });
+    return { ...recipe.toObject(), ingredients };
+  });
 
   return {
     total,
@@ -26,8 +38,31 @@ export const removeRecipe = (recipeId, owner) => {
   return Recipe.findOneAndDelete({ _id: recipeId, owner });
 };
 
-export const addRecipe = data => {
-  return Recipe.create(data);
+export const addRecipe = async data => {
+  let newRecipe = await Recipe.create(data);
+  newRecipe = await Recipe.findById(newRecipe._id).populate(
+    'ingredients.id',
+    'name desc img'
+  );
+
+  const ingredients = newRecipe.ingredients.map(ingredient => {
+    return {
+      ingredient: {
+        _id: ingredient.id._id,
+        name: ingredient.id.name,
+        desc: ingredient.id.desc,
+        img: ingredient.id.img,
+      },
+      measure: ingredient.measure,
+    };
+  });
+
+  const response = {
+    ...newRecipe.toObject(),
+    ingredients,
+  };
+
+  return response;
 };
 
 export const addFavoriteRecipe = (recipeId, userId) => {

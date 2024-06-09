@@ -4,9 +4,10 @@ import { handleSaveError, setUpdateSettings } from './hooks.js';
 const ingredientsToRecipeSchema = new Schema(
   {
     id: {
-      type: Schema.Types.ObjectId,
+      type: String,
       ref: 'ingredient',
       required: [true, 'Ingredients is required'],
+      alias: 'ingredient',
     },
     measure: {
       type: String,

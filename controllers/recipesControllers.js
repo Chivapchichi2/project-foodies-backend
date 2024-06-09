@@ -4,15 +4,35 @@ import HttpError from '../helpers/HttpError.js';
 import handleResult from '../helpers/handleResult.js';
 import cloudinary from '../helpers/cloudinary.js';
 import fs from 'fs/promises';
+import { firstLetterToCapital } from '../helpers/utils.js';
+import Ingredient from '../db/models/Ingredient.js';
 
 const getRecipesByFilter = async (req, res) => {
   const { category, ingredients, area, page = 1, limit = 12 } = req.query;
   const skip = (page - 1) * limit;
   const filter = {};
 
-  if (category) filter.category = category;
-  if (ingredients) filter.ingredients = ingredients;
-  if (area) filter.area = area;
+  if (category) filter.category = firstLetterToCapital(category);
+
+  if (ingredients) {
+    const ingredientsArray = ingredients
+      .split(',')
+      .map(name => firstLetterToCapital(name.trim()));
+    const ingredientsDocs = await Ingredient.find(
+      {
+        name: { $in: ingredientsArray },
+      },
+      '_id'
+    );
+
+    const ingredientsIds = ingredientsDocs.map(doc => doc._id);
+
+    filter.ingredients = {
+      $all: ingredientsIds.map(id => ({ $elemMatch: { id } })),
+    };
+  }
+
+  if (area) filter.area = firstLetterToCapital(area);
 
   const fields = '-createdAt -updatedAt';
   const settings = { skip, limit };
@@ -74,7 +94,7 @@ const addRecipe = async (req, res) => {
         thumb,
       });
 
-      return res.status(201).json({ data: newRecipe });
+      return res.status(201).json(newRecipe);
     }
 
     const newRecipe = await recipesService.addRecipe({
