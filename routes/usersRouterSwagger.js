@@ -279,15 +279,15 @@
  *                         name:
  *                           type: string
  *                           description: Name of the registered user
- *                         email:
+ *                         avatarURL:
  *                           type: string
- *                           description: Email of the registered user
+ *                           description: Link to avatar of the registered user
  *               example:
  *                 user:
  *                   token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
  *                   user:
  *                     name: John Doe
- *                     email: user@example.com
+ *                     avatarURL: "http://res.cloudinary.com/dgbwicpza/.../hlvodxck85k5zjyu0zds.jpg"
  *       400:
  *         description: Bad Request
  *         content:
@@ -353,14 +353,14 @@
  *                     name:
  *                       type: string
  *                       description: Name of the signed-in user
- *                     email:
+ *                     avatarURL:
  *                       type: string
- *                       description: Email of the signed-in user
+ *                       description: Link to avatar of the registered user
  *               example:
  *                 token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
  *                 user:
  *                   name: John Doe
- *                   email: user@example.com
+ *                   avatarURL: "http://res.cloudinary.com/dgbwicpza/.../hlvodxck85k5zjyu0zds.jpg"
  *       401:
  *         description: Email or password invalid
  *         content:

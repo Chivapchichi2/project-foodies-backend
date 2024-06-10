@@ -1,5 +1,6 @@
 import Favorite from '../db/models/Favorite.js';
 import Recipe from '../db/models/Recipe.js';
+import { processRecipe } from '../helpers/utils.js';
 
 export const listRecipes = async (search = {}) => {
   const { filter = {}, fields = '', settings = {} } = search;
@@ -11,15 +12,7 @@ export const listRecipes = async (search = {}) => {
       select: 'name desc img',
     });
 
-  data = data.map(recipe => {
-    const ingredients = recipe.ingredients.map(ingredient => {
-      return {
-        ingredient: ingredient.id,
-        measure: ingredient.measure,
-      };
-    });
-    return { ...recipe.toObject(), ingredients };
-  });
+  data = data.map(recipe => processRecipe(recipe));
 
   return {
     total,
@@ -27,11 +20,15 @@ export const listRecipes = async (search = {}) => {
   };
 };
 
-export const getRecipeById = recipetId => {
-  return Recipe.findOne({ _id: recipetId }).populate(
-    'owner',
-    '_id name avatar email'
-  );
+export const getRecipeById = async recipetId => {
+  const recipe = await Recipe.findOne({ _id: recipetId })
+    .populate('owner', '_id name avatar email')
+    .populate({
+      path: 'ingredients.id',
+      select: 'name desc img',
+    });
+
+  return processRecipe(recipe);
 };
 
 export const removeRecipe = (recipeId, owner) => {
@@ -45,24 +42,7 @@ export const addRecipe = async data => {
     'name desc img'
   );
 
-  const ingredients = newRecipe.ingredients.map(ingredient => {
-    return {
-      ingredient: {
-        _id: ingredient.id._id,
-        name: ingredient.id.name,
-        desc: ingredient.id.desc,
-        img: ingredient.id.img,
-      },
-      measure: ingredient.measure,
-    };
-  });
-
-  const response = {
-    ...newRecipe.toObject(),
-    ingredients,
-  };
-
-  return response;
+  return processRecipe(newRecipe);
 };
 
 export const addFavoriteRecipe = (recipeId, userId) => {

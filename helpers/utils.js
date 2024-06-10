@@ -10,3 +10,25 @@ export function firstLetterToCapital(str) {
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
 }
+
+/**
+ * Processes a recipe object to include the ingredients' details.
+ * @param recipe
+ * @returns {*&{ingredients: {ingredient: {img: *, name: *, _id: *, desc: *}, measure: *}[]}}
+ */
+export const processRecipe = recipe => {
+  const ingredients = recipe.ingredients.map(ingredient => ({
+    ingredient: {
+      _id: ingredient.id._id,
+      name: ingredient.id.name,
+      desc: ingredient.id.desc,
+      img: ingredient.id.img,
+    },
+    measure: ingredient.measure,
+  }));
+
+  return {
+    ...recipe.toObject(),
+    ingredients,
+  };
+};

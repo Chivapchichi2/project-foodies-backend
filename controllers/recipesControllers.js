@@ -128,7 +128,6 @@ const addFavoriteRecipe = async (req, res) => {
   const { total: isFavorite } = await recipesService.getMyFavoriteRecipe({
     filter: { user, recipe },
   });
-
   const isRecipe = await recipesService.getRecipeById(recipe);
   if (!isRecipe) {
     throw HttpError(404, 'Recipe not found');
