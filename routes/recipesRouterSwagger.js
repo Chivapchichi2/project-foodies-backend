@@ -412,25 +412,22 @@
  *                 description: The ID of the recipe to add to favorites
  *                 example: "6462a8f74c3d0ddd28897fcd"
  *     responses:
- *       200:
+ *       201:
  *         description: Recipe added to favorites successfully
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 data:
- *                   type: object
- *                   properties:
- *                     _id:
- *                       type: string
- *                       example: "60c72b2f9b1d8e0022d5b567"
- *                     user:
- *                       type: string
- *                       example: "60c72b2f9b1d8e0022d5b565"
- *                     recipe:
- *                       type: string
- *                       example: "60c72b2f9b1d8e0022d5b564"
+ *                 _id:
+ *                   type: string
+ *                   example: "60c72b2f9b1d8e0022d5b567"
+ *                 user:
+ *                   type: string
+ *                   example: "60c72b2f9b1d8e0022d5b565"
+ *                 recipe:
+ *                   type: string
+ *                   example: "60c72b2f9b1d8e0022d5b564"
  *       400:
  *         description: Bad request
  *         content:
@@ -513,18 +510,15 @@
  *             schema:
  *               type: object
  *               properties:
- *                 data:
- *                   type: object
- *                   properties:
- *                     _id:
- *                       type: string
- *                       example: "60c72b2f9b1d8e0022d5b567"
- *                     user:
- *                       type: string
- *                       example: "60c72b2f9b1d8e0022d5b565"
- *                     recipe:
- *                       type: string
- *                       example: "60c72b2f9b1d8e0022d5b564"
+ *                 _id:
+ *                   type: string
+ *                   example: "60c72b2f9b1d8e0022d5b567"
+ *                 user:
+ *                   type: string
+ *                   example: "60c72b2f9b1d8e0022d5b565"
+ *                 recipe:
+ *                   type: string
+ *                   example: "60c72b2f9b1d8e0022d5b564"
  *       400:
  *         description: Bad request
  *         content:
@@ -759,9 +753,7 @@
  *           application/json:
  *             schema:
  *               type: object
- *               properties:
- *                 data:
- *                   $ref: '#/components/schemas/Recipe'
+ *               $ref: '#/components/schemas/Recipe'
  *       401:
  *         description: Unauthorized
  *         content:

@@ -119,7 +119,7 @@ const removeRecipe = async (req, res) => {
   const result = await recipesService.removeRecipe(id, owner);
   handleResult(result);
 
-  res.json({ data: result });
+  res.json(result);
 };
 
 const addFavoriteRecipe = async (req, res) => {
@@ -139,7 +139,7 @@ const addFavoriteRecipe = async (req, res) => {
 
   const result = await recipesService.addFavoriteRecipe(recipe, user);
 
-  res.json({ data: result });
+  res.status(201).json(result);
 };
 
 const removeFavoriteRecipe = async (req, res) => {
@@ -150,7 +150,7 @@ const removeFavoriteRecipe = async (req, res) => {
   const result = await recipesService.removeFavoriteRecipe(recipe, user);
   handleResult(result);
 
-  res.json({ data: result });
+  res.json(result);
 };
 
 const getAllFavoriteRecipe = async (req, res) => {

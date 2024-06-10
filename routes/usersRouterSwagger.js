@@ -276,6 +276,9 @@
  *                     user:
  *                       type: object
  *                       properties:
+ *                         id:
+ *                           type: string
+ *                           description: id of the registered user
  *                         name:
  *                           type: string
  *                           description: Name of the registered user
@@ -286,6 +289,7 @@
  *                 user:
  *                   token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
  *                   user:
+ *                     id: 64c8d958249fae54bae90bb9
  *                     name: John Doe
  *                     avatarURL: "http://res.cloudinary.com/dgbwicpza/.../hlvodxck85k5zjyu0zds.jpg"
  *       400:
@@ -350,6 +354,9 @@
  *                 user:
  *                   type: object
  *                   properties:
+ *                     id:
+ *                       type: string
+ *                       description: id of the registered user
  *                     name:
  *                       type: string
  *                       description: Name of the signed-in user
@@ -359,6 +366,7 @@
  *               example:
  *                 token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
  *                 user:
+ *                   id: 64c8d958249fae54bae90bb9
  *                   name: John Doe
  *                   avatarURL: "http://res.cloudinary.com/dgbwicpza/.../hlvodxck85k5zjyu0zds.jpg"
  *       401:

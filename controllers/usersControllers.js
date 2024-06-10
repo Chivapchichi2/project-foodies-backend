@@ -39,7 +39,11 @@ const signUp = async (req, res) => {
   res.status(201).json({
     user: {
       token: updatedUser.token,
-      user: { name: updatedUser.name, avatarURL: updatedUser.avatarURL },
+      user: {
+        id: updatedUser._id,
+        name: updatedUser.name,
+        avatarURL: updatedUser.avatarURL,
+      },
     },
   });
 };
@@ -68,6 +72,7 @@ const signIn = async (req, res) => {
   res.json({
     token,
     user: {
+      id: user._id,
       name: user.name,
       avatarURL: user.avatarURL,
     },
@@ -81,8 +86,8 @@ const signOut = async (req, res) => {
 };
 
 const getCurrent = (req, res) => {
-  const { name, email, avatarURL, followers, following } = req.user;
-  res.status(200).json({ name, email, avatarURL, followers, following });
+  const { _id: id, name, email, avatarURL, followers, following } = req.user;
+  res.json({ id, name, email, avatarURL, followers, following });
 };
 
 const updateAvatar = async (req, res) => {
@@ -98,7 +103,7 @@ const updateAvatar = async (req, res) => {
 
     await usersServices.updateUser({ _id }, { avatarURL });
 
-    res.status(200).json({ avatarURL });
+    res.json({ avatarURL });
   } catch (err) {
     throw HttpError(400, err.message);
   } finally {
@@ -113,7 +118,7 @@ const getFollowers = async (req, res) => {
     throw HttpError(404, 'User not found');
   }
 
-  res.status(200).json({ followers: user.followers });
+  res.json({ followers: user.followers });
 };
 
 const getFollowing = async (req, res) => {
@@ -123,7 +128,7 @@ const getFollowing = async (req, res) => {
     throw HttpError(404, 'User not found');
   }
 
-  res.status(200).json({ following: user.following });
+  res.json({ following: user.following });
 };
 
 const followUser = async (req, res) => {
@@ -149,7 +154,7 @@ const followUser = async (req, res) => {
   userToFollow.followers.push(_id);
   await userToFollow.save();
 
-  res.status(200).json({ message: 'User followed successfully' });
+  res.json({ message: 'User followed successfully' });
 };
 
 const unfollowUser = async (req, res) => {
@@ -181,7 +186,7 @@ const unfollowUser = async (req, res) => {
 
   await userToUnfollow.save();
 
-  res.status(200).json({ message: 'User unfollowed successfully' });
+  res.json({ message: 'User unfollowed successfully' });
 };
 
 const getUserDetails = async (req, res) => {
@@ -212,7 +217,7 @@ const getUserDetails = async (req, res) => {
       followersCount: user.followers.length,
       followingCount: user.following.length,
     };
-    res.status(200).json(userDetails);
+    res.json(userDetails);
   } else {
     const userDetails = {
       avatar: user.avatarURL,
@@ -221,7 +226,7 @@ const getUserDetails = async (req, res) => {
       createdRecipesCount,
       followersCount: user.followers.length,
     };
-    res.status(200).json(userDetails);
+    res.json(userDetails);
   }
 };
 
