@@ -118,7 +118,15 @@ const getFollowers = async (req, res) => {
     throw HttpError(404, 'User not found');
   }
 
-  res.json({ followers: user.followers });
+  const followers = user.followers.map(follower => {
+    return {
+      _id: follower._id,
+      name: follower.name,
+      avatarURL: follower.avatarURL,
+    };
+  });
+
+  res.json(followers);
 };
 
 const getFollowing = async (req, res) => {
@@ -128,7 +136,15 @@ const getFollowing = async (req, res) => {
     throw HttpError(404, 'User not found');
   }
 
-  res.json({ following: user.following });
+  const following = user.following.map(follower => {
+    return {
+      _id: follower._id,
+      name: follower.name,
+      avatarURL: follower.avatarURL,
+    };
+  });
+
+  res.json(following);
 };
 
 const followUser = async (req, res) => {

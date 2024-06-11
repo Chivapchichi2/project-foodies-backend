@@ -559,13 +559,34 @@
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 followers:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/User'
- *                   example: []
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   _id:
+ *                     type: string
+ *                     example: "666475c9568c641b4c0bbe28"
+ *                   name:
+ *                     type: string
+ *                     example: "John Doe"
+ *                   avatarURL:
+ *                     type: string
+ *                     example:
+ *                      "http://res.cloudinary.com/dgbwicpza/image/upload/v1717873428/avatars/hlvodxck85k5zjyu0zds.jpg"
+ *               example:
+ *                 - _id: "666475c9568c641b4c0bbe28"
+ *                   name: "John Doe"
+ *                   avatarURL:
+ *                    "http://res.cloudinary.com/dgbwicpza/image/upload/v1717873428/avatars/hlvodxck85k5zjyu0zds.jpg"
+ *                 - _id: "66642982025b00dec061c029"
+ *                   name: "werewrew"
+ *                   avatarURL: "https://s.gravatar.com/avatar/1aedb8d9dc4751e229a335e371db8058?s=250&r=pg&d=retro"
+ *                 - _id: "666442dd025b00dec061c04e"
+ *                   name: "Vova"
+ *                   avatarURL: "https://s.gravatar.com/avatar/b63a966264a9496dad9792d8184f3244?s=250&r=pg&d=retro"
+ *                 - _id: "64c8d958249fae54bae90bb8"
+ *                   name: "Foodies user"
+ *                   avatarURL: null
  *       401:
  *         description: Unauthorized, authentication token is missing or invalid
  *         content:
@@ -605,13 +626,34 @@
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 following:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/User'
- *                   example: []
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   _id:
+ *                     type: string
+ *                     example: "666475c9568c641b4c0bbe28"
+ *                   name:
+ *                     type: string
+ *                     example: "John Doe"
+ *                   avatarURL:
+ *                     type: string
+ *                     example:
+ *                      "http://res.cloudinary.com/dgbwicpza/image/upload/v1717873428/avatars/hlvodxck85k5zjyu0zds.jpg"
+ *               example:
+ *                 - _id: "666475c9568c641b4c0bbe28"
+ *                   name: "John Doe"
+ *                   avatarURL:
+ *                    "http://res.cloudinary.com/dgbwicpza/image/upload/v1717873428/avatars/hlvodxck85k5zjyu0zds.jpg"
+ *                 - _id: "66642982025b00dec061c029"
+ *                   name: "werewrew"
+ *                   avatarURL: "https://s.gravatar.com/avatar/1aedb8d9dc4751e229a335e371db8058?s=250&r=pg&d=retro"
+ *                 - _id: "666442dd025b00dec061c04e"
+ *                   name: "Vova"
+ *                   avatarURL: "https://s.gravatar.com/avatar/b63a966264a9496dad9792d8184f3244?s=250&r=pg&d=retro"
+ *                 - _id: "64c8d958249fae54bae90bb8"
+ *                   name: "Foodies user"
+ *                   avatarURL: null
  *       401:
  *         description: Unauthorized, authentication token is missing or invalid
  *         content:
