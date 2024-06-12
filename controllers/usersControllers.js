@@ -209,6 +209,10 @@ const getUserDetails = async (req, res) => {
   const { userId } = req.params;
   const { _id } = req.user;
 
+  const { page = 1, limit = 9 } = req.query;
+  const skip = (page - 1) * limit;
+  const settings = { skip, limit };
+
   const user = await usersServices.findUser({ _id: userId });
   if (!user) {
     throw HttpError(404, 'User not found');
@@ -218,6 +222,7 @@ const getUserDetails = async (req, res) => {
 
   const createdRecipesCount = await recipesServices.listRecipes({
     filter: { owner: userId },
+    settings,
   });
 
   if (isAuthorizedUser) {
