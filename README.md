@@ -116,9 +116,7 @@ The server will start at http://localhost:3000.
 ### API Documentation
   API documentation is available using Swagger. To access the documentation, start the server and navigate to:
 
-```bash
 https://foodies-ua-1497a9d7b69f.herokuapp.com/api/
-```
 
 or on your local server:
 
