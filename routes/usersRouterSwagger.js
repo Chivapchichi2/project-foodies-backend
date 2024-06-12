@@ -695,7 +695,7 @@
  *         schema:
  *           type: string
  *     responses:
- *       200:
+ *       201:
  *         description: User followed successfully
  *         content:
  *           application/json:
