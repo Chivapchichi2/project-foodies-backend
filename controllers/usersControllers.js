@@ -112,13 +112,20 @@ const updateAvatar = async (req, res) => {
 };
 
 const getFollowers = async (req, res) => {
-  const { _id } = req.user;
-  const user = await usersServices.findUser({ _id }).populate('followers');
+  const { userId } = req.params;
+  const { page = 1, limit = 10 } = req.query;
+
+  const user = await usersServices
+    .findUser({ _id: userId })
+    .populate('followers');
   if (!user) {
     throw HttpError(404, 'User not found');
   }
 
-  const followers = user.followers.map(follower => {
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+
+  const followers = user.followers.slice(startIndex, endIndex).map(follower => {
     return {
       _id: follower._id,
       name: follower.name,
@@ -126,17 +133,25 @@ const getFollowers = async (req, res) => {
     };
   });
 
-  res.json(followers);
+  res.json({
+    totalFollowers: user.followers.length,
+    page,
+    totalPages: Math.ceil(user.followers.length / limit),
+    followers,
+  });
 };
 
 const getFollowing = async (req, res) => {
   const { _id } = req.user;
+  const { page = 1, limit = 10 } = req.query;
   const user = await usersServices.findUser({ _id }).populate('following');
   if (!user) {
     throw HttpError(404, 'User not found');
   }
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
 
-  const following = user.following.map(follower => {
+  const following = user.following.slice(startIndex, endIndex).map(follower => {
     return {
       _id: follower._id,
       name: follower.name,
@@ -144,7 +159,12 @@ const getFollowing = async (req, res) => {
     };
   });
 
-  res.json(following);
+  res.json({
+    totalFollowing: user.following.length,
+    page,
+    totalPages: Math.ceil(user.following.length / limit),
+    following,
+  });
 };
 
 const followUser = async (req, res) => {

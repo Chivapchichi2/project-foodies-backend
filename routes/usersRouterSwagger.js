@@ -546,11 +546,30 @@
 
 /**
  * @swagger
- * /api/users/followers:
+ * /api/users/followers/{userId}:
  *   get:
  *     summary: Get user followers
- *     description: Retrieve the list of users following the current user.
+ *     description: Retrieve the list of users following the specified user with pagination.
  *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the user to retrieve followers for
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: The page number to retrieve
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: The number of followers per page
  *     security:
  *       - BearerAuth: []
  *     responses:
@@ -559,34 +578,48 @@
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   _id:
- *                     type: string
- *                     example: "666475c9568c641b4c0bbe28"
- *                   name:
- *                     type: string
- *                     example: "John Doe"
- *                   avatarURL:
- *                     type: string
- *                     example:
- *                      "http://res.cloudinary.com/dgbwicpza/image/upload/v1717873428/avatars/hlvodxck85k5zjyu0zds.jpg"
+ *               type: object
+ *               properties:
+ *                 totalFollowers:
+ *                   type: integer
+ *                   example: 50
+ *                 page:
+ *                   type: integer
+ *                   example: 1
+ *                 totalPages:
+ *                   type: integer
+ *                   example: 5
+ *                 followers:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         example: "666475c9568c641b4c0bbe28"
+ *                       name:
+ *                         type: string
+ *                         example: "John Doe"
+ *                       avatarURL:
+ *                         type: string
+ *                         example: "http://res.cloudinary.com/dgbwicpza/image/upload/v1717873428/avatars/hlvodxck85k5zjyu0zds.jpg"
  *               example:
- *                 - _id: "666475c9568c641b4c0bbe28"
- *                   name: "John Doe"
- *                   avatarURL:
- *                    "http://res.cloudinary.com/dgbwicpza/image/upload/v1717873428/avatars/hlvodxck85k5zjyu0zds.jpg"
- *                 - _id: "66642982025b00dec061c029"
- *                   name: "werewrew"
- *                   avatarURL: "https://s.gravatar.com/avatar/1aedb8d9dc4751e229a335e371db8058?s=250&r=pg&d=retro"
- *                 - _id: "666442dd025b00dec061c04e"
- *                   name: "Vova"
- *                   avatarURL: "https://s.gravatar.com/avatar/b63a966264a9496dad9792d8184f3244?s=250&r=pg&d=retro"
- *                 - _id: "64c8d958249fae54bae90bb8"
- *                   name: "Foodies user"
- *                   avatarURL: null
+ *                 totalFollowers: 50
+ *                 page: 1
+ *                 totalPages: 5
+ *                 followers:
+ *                   - _id: "666475c9568c641b4c0bbe28"
+ *                     name: "John Doe"
+ *                     avatarURL: "http://res.cloudinary.com/dgbwicpza/image/upload/v1717873428/avatars/hlvodxck85k5zjyu0zds.jpg"
+ *                   - _id: "66642982025b00dec061c029"
+ *                     name: "werewrew"
+ *                     avatarURL: "https://s.gravatar.com/avatar/1aedb8d9dc4751e229a335e371db8058?s=250&r=pg&d=retro"
+ *                   - _id: "666442dd025b00dec061c04e"
+ *                     name: "Vova"
+ *                     avatarURL: "https://s.gravatar.com/avatar/b63a966264a9496dad9792d8184f3244?s=250&r=pg&d=retro"
+ *                   - _id: "64c8d958249fae54bae90bb8"
+ *                     name: "Foodies user"
+ *                     avatarURL: null
  *       401:
  *         description: Unauthorized, authentication token is missing or invalid
  *         content:
@@ -598,6 +631,17 @@
  *                   type: string
  *                   description: Error message
  *                   example: "Authorization header not found"
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Error message
+ *                   example: "User not found"
  *       500:
  *         description: Internal server error
  *         content:
@@ -615,45 +659,72 @@
  * @swagger
  * /api/users/following:
  *   get:
- *     summary: Get user followers
- *     description: Retrieve the list of users following the current user.
+ *     summary: Get user following
+ *     description: Retrieve the list of users that the current user is following with pagination.
  *     tags: [Users]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: The page number to retrieve
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: The number of users per page
  *     security:
  *       - BearerAuth: []
  *     responses:
  *       200:
- *         description: List of user followers retrieved successfully
+ *         description: List of users the current user is following retrieved successfully
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   _id:
- *                     type: string
- *                     example: "666475c9568c641b4c0bbe28"
- *                   name:
- *                     type: string
- *                     example: "John Doe"
- *                   avatarURL:
- *                     type: string
- *                     example:
- *                      "http://res.cloudinary.com/dgbwicpza/image/upload/v1717873428/avatars/hlvodxck85k5zjyu0zds.jpg"
+ *               type: object
+ *               properties:
+ *                 totalFollowing:
+ *                   type: integer
+ *                   example: 50
+ *                 page:
+ *                   type: integer
+ *                   example: 1
+ *                 totalPages:
+ *                   type: integer
+ *                   example: 5
+ *                 following:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         example: "666475c9568c641b4c0bbe28"
+ *                       name:
+ *                         type: string
+ *                         example: "John Doe"
+ *                       avatarURL:
+ *                         type: string
+ *                         example: "http://res.cloudinary.com/dgbwicpza/image/upload/v1717873428/avatars/hlvodxck85k5zjyu0zds.jpg"
  *               example:
- *                 - _id: "666475c9568c641b4c0bbe28"
- *                   name: "John Doe"
- *                   avatarURL:
- *                    "http://res.cloudinary.com/dgbwicpza/image/upload/v1717873428/avatars/hlvodxck85k5zjyu0zds.jpg"
- *                 - _id: "66642982025b00dec061c029"
- *                   name: "werewrew"
- *                   avatarURL: "https://s.gravatar.com/avatar/1aedb8d9dc4751e229a335e371db8058?s=250&r=pg&d=retro"
- *                 - _id: "666442dd025b00dec061c04e"
- *                   name: "Vova"
- *                   avatarURL: "https://s.gravatar.com/avatar/b63a966264a9496dad9792d8184f3244?s=250&r=pg&d=retro"
- *                 - _id: "64c8d958249fae54bae90bb8"
- *                   name: "Foodies user"
- *                   avatarURL: null
+ *                 totalFollowing: 50
+ *                 page: 1
+ *                 totalPages: 5
+ *                 following:
+ *                   - _id: "666475c9568c641b4c0bbe28"
+ *                     name: "John Doe"
+ *                     avatarURL: "http://res.cloudinary.com/dgbwicpza/image/upload/v1717873428/avatars/hlvodxck85k5zjyu0zds.jpg"
+ *                   - _id: "66642982025b00dec061c029"
+ *                     name: "werewrew"
+ *                     avatarURL: "https://s.gravatar.com/avatar/1aedb8d9dc4751e229a335e371db8058?s=250&r=pg&d=retro"
+ *                   - _id: "666442dd025b00dec061c04e"
+ *                     name: "Vova"
+ *                     avatarURL: "https://s.gravatar.com/avatar/b63a966264a9496dad9792d8184f3244?s=250&r=pg&d=retro"
+ *                   - _id: "64c8d958249fae54bae90bb8"
+ *                     name: "Foodies user"
+ *                     avatarURL: null
  *       401:
  *         description: Unauthorized, authentication token is missing or invalid
  *         content:
@@ -665,6 +736,17 @@
  *                   type: string
  *                   description: Error message
  *                   example: "Authorization header not found"
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Error message
+ *                   example: "User not found"
  *       500:
  *         description: Internal server error
  *         content:

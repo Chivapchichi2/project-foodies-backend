@@ -36,7 +36,11 @@ usersRouter.patch(
   authControllers.updateAvatar
 );
 
-usersRouter.get('/followers', authenticate, authControllers.getFollowers);
+usersRouter.get(
+  '/followers/:userId',
+  authenticate,
+  authControllers.getFollowers
+);
 
 usersRouter.get('/following', authenticate, authControllers.getFollowing);
 
