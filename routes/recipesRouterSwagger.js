@@ -354,8 +354,21 @@
  * /api/recipes/myrecipes/favorites:
  *   get:
  *     summary: Get user's favorite recipes
- *     description: Retrieve a list of favorite recipes of the authenticated user.
+ *     description: Retrieve a list of favorite recipes of the authenticated user with pagination.
  *     tags: [Recipes]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: The page number to retrieve
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: The number of recipes per page
  *     security:
  *       - BearerAuth: []
  *     responses:
@@ -364,9 +377,21 @@
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Recipe'
+ *               type: object
+ *               properties:
+ *                 total:
+ *                   type: integer
+ *                   example: 2
+ *                 currentPage:
+ *                   type: integer
+ *                   example: 1
+ *                 totalPages:
+ *                   type: integer
+ *                   example: 1
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Recipe'
  *       401:
  *         description: Unauthorized
  *         content:
