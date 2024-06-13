@@ -1,5 +1,4 @@
 import * as usersServices from '../services/usersServices.js';
-import * as recipesServices from '../services/recipesServices.js';
 import ctrlWrapper from '../decorators/ctrlWrapper.js';
 import HttpError from '../helpers/HttpError.js';
 import gravatar from 'gravatar';
@@ -232,10 +231,6 @@ const unfollowUser = async (req, res) => {
 const getUserDetails = async (req, res) => {
   const { userId } = req.params;
   const { _id } = req.user;
-
-  const { page = 1, limit = 9 } = req.query;
-  const skip = (page - 1) * limit;
-  const settings = { skip, limit };
 
   const user = await usersServices.findUser({ _id: userId });
   if (!user) {
