@@ -46,7 +46,10 @@ export const addRecipe = async data => {
 };
 
 export const addFavoriteRecipe = (recipeId, userId) => {
-  return Favorite.create({ recipe: recipeId, user: userId });
+  return Favorite.create({ recipe: recipeId, user: userId }).populate(
+    'owner',
+    '_id name avatar email'
+  );
 };
 
 export const removeFavoriteRecipe = (recipeId, userId) => {
