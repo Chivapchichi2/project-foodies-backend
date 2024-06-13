@@ -99,43 +99,21 @@
  *           description: Email address of the user
  *           example: "user@example.com"
  *         createdRecipesCount:
- *           type: object
- *           properties:
- *             total:
- *               type: integer
- *               description: Total number of recipes created by the user
- *               example: 0
- *             data:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Recipe'
+ *           type: integer
  *           description: User's created recipes count
- *           example:
- *             total: 0
- *             data: []
+ *           example: 42
  *         favoriteRecipesCount:
- *           type: object
- *           properties:
- *             total:
- *               type: integer
- *               description: Total number of recipes favorited by the user
- *               example: 0
- *             data:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Recipe'
+ *           type: integer
  *           description: User's favorite recipes count
- *           example:
- *             total: 0
- *             data: []
+ *           example: 17
  *         followersCount:
  *           type: integer
  *           description: Total number of followers of the user
- *           example: 0
+ *           example: 4
  *         followingCount:
  *           type: integer
  *           description: Total number of users the user is following
- *           example: 0
+ *           example: 4
  *       description: User details for the authenticated user
  *     OtherUserDetails:
  *       type: object
@@ -153,20 +131,9 @@
  *           description: Email address of the user
  *           example: "example@example.com"
  *         createdRecipesCount:
- *           type: object
- *           properties:
- *             total:
- *               type: integer
- *               description: Total number of recipes created by the user
- *               example: 0
- *             data:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Recipe'
+ *           type: integer
  *           description: User's created recipes count
- *           example:
- *             total: 0
- *             data: []
+ *           example: 42
  *         followersCount:
  *           type: integer
  *           description: Total number of followers of the user

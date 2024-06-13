@@ -8,6 +8,10 @@ import { createToken } from '../helpers/jwt.js';
 import cloudinary from '../helpers/cloudinary.js';
 import fs from 'fs/promises';
 import Jimp from 'jimp';
+import {
+  countRecipeCreated,
+  countRecipeFavorite,
+} from '../services/recipesServices.js';
 
 const signUp = async (req, res) => {
   const { email } = req.body;
@@ -240,15 +244,10 @@ const getUserDetails = async (req, res) => {
 
   const isAuthorizedUser = _id.toString() === userId;
 
-  const createdRecipesCount = await recipesServices.listRecipes({
-    filter: { owner: userId },
-    settings,
-  });
+  const createdRecipesCount = await countRecipeCreated(userId);
 
   if (isAuthorizedUser) {
-    const favoriteRecipesCount = await recipesServices.getMyFavoriteRecipe({
-      userId,
-    });
+    const favoriteRecipesCount = await countRecipeFavorite(userId);
     const userDetails = {
       avatar: user.avatarURL,
       name: user.name,

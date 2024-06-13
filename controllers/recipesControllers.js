@@ -171,7 +171,7 @@ const getAllFavoriteRecipe = async (req, res) => {
 
 const getMyFavoriteRecipe = async (req, res) => {
   const { _id: user } = req.user;
-  const { page = 1, limit = 10 } = req.query;
+  const { page = 1, limit = 10 } = Number(req.query);
   const skip = (page - 1) * limit;
   const filter = { user };
 

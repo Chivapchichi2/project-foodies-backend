@@ -4,7 +4,7 @@ import { processRecipe } from '../helpers/utils.js';
 
 export const listRecipes = async (search = {}) => {
   const { filter = {}, fields = '', settings = {} } = search;
-  const total = await Recipe.countDocuments(filter);
+  const total = await countRecipe(filter);
   let data = await Recipe.find(filter, fields, settings)
     .populate('owner', '_id name avatar email')
     .populate({
@@ -56,9 +56,7 @@ export const removeFavoriteRecipe = (recipeId, userId) => {
 export const getMyFavoriteRecipe = async (search = {}) => {
   const { filter = {}, fields = '', settings = {} } = search;
 
-  const total = await Favorite.find(filter, fields, settings).countDocuments(
-    filter
-  );
+  const total = await countRecipeFavorite(filter);
   const data = await Favorite.find(filter, fields, settings).populate('recipe');
   return { total, data };
 };
@@ -110,3 +108,8 @@ export const getAllFavoriteRecipe = async (skip, limit) => {
 export const updateRecipe = (recipeId, owner, data) => {
   return Recipe.findOneAndUpdate({ _id: recipeId, owner }, data);
 };
+
+export const countRecipeCreated = async filter => Recipe.countDocuments(filter);
+
+export const countRecipeFavorite = async filter =>
+  Favorite.countDocuments(filter);
