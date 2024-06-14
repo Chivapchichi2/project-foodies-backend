@@ -98,7 +98,7 @@ const updateAvatar = async (req, res) => {
   const { _id } = req.user;
   const { path } = req.file;
   const img = await Jimp.read(path);
-  await img.resize(250, 250).writeAsync(path);
+  await img.scaleToFit(250, 250).writeAsync(path);
 
   try {
     const { url: avatarURL } = await cloudinary.uploader.upload(path, {
@@ -117,7 +117,7 @@ const updateAvatar = async (req, res) => {
 
 const getFollowers = async (req, res) => {
   const { userId } = req.params;
-  const { page = 1, limit = 10 } = req.query;
+  const { page = 1, limit = 10, rlimit = 4 } = req.query;
 
   const user = await usersServices
     .findUser({ _id: userId })
@@ -137,17 +137,34 @@ const getFollowers = async (req, res) => {
     };
   });
 
+  const followersWithRecipes = await Promise.all(
+    followers.map(async fol => {
+      const recipes = await Recipe.find(
+        { owner: fol._id },
+        '_id title thumb'
+      ).limit(Number(rlimit));
+      const totalRecipes = await Recipe.countDocuments({ owner: fol._id });
+      return {
+        _id: fol._id,
+        name: fol.name,
+        avatarURL: fol.avatarURL,
+        totalRecipes,
+        recipes,
+      };
+    })
+  );
+
   res.json({
     totalFollowers: user.followers.length,
     page,
     totalPages: Math.ceil(user.followers.length / limit),
-    followers,
+    followersWithRecipes,
   });
 };
 
 const getFollowing = async (req, res) => {
   const { _id } = req.user;
-  const { page = 1, limit = 10, recipe = 4 } = req.query;
+  const { page = 1, limit = 10, rlimit = 4 } = req.query;
   const user = await usersServices.findUser({ _id }).populate('following');
 
   if (!user) {
@@ -169,7 +186,7 @@ const getFollowing = async (req, res) => {
       const recipes = await Recipe.find(
         { owner: fol._id },
         '_id title thumb'
-      ).limit(Number(recipe));
+      ).limit(Number(rlimit));
       const totalRecipes = await Recipe.countDocuments({ owner: fol._id });
       return {
         _id: fol._id,

@@ -536,57 +536,100 @@
  *         schema:
  *           type: integer
  *           default: 10
- *         description: The number of followers per page
+ *         description: The number of followed users per page
+ *       - in: query
+ *         name: rlimit
+ *         schema:
+ *           type: integer
+ *           default: 4
+ *         description: The number of recipes to retrieve per followed user
  *     security:
  *       - BearerAuth: []
  *     responses:
  *       200:
- *         description: List of user followers retrieved successfully
+ *         description: List of users that the specified user is following retrieved successfully with their recipes
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 totalFollowers:
+ *                 totalFollowing:
  *                   type: integer
- *                   example: 50
+ *                   example: 4
  *                 page:
  *                   type: integer
  *                   example: 1
  *                 totalPages:
  *                   type: integer
- *                   example: 5
- *                 followers:
+ *                   example: 1
+ *                 followersWithRecipes:
  *                   type: array
  *                   items:
  *                     type: object
  *                     properties:
  *                       _id:
  *                         type: string
- *                         example: "666475c9568c641b4c0bbe28"
+ *                         example: "6664267a025b00dec061c020"
  *                       name:
  *                         type: string
- *                         example: "John Doe"
+ *                         example: "Vova"
  *                       avatarURL:
  *                         type: string
- *                         example: "http://res.cloudinary.com/dgbwicpza/image/upload/v1717873428/avatars/hlvodxck85k5zjyu0zds.jpg"
+ *                         example: "https://s.gravatar.com/avatar/23463b99b62a72f26ed677cc556c44e8?s=250&r=pg&d=retro"
+ *                       totalRecipes:
+ *                         type: integer
+ *                         example: 0
+ *                       recipes:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             _id:
+ *                               type: string
+ *                               example: "66661fa2ac16808623353208"
+ *                             title:
+ *                               type: string
+ *                               example: "Beef Brisket Pot Roast"
+ *                             thumb:
+ *                               type: string
+ *                               example: "http://res.cloudinary.com/dgbwicpza/image/upload/v1717968802/recipes/ttzbmmgadqj2pvn9zsat.jpg"
  *               example:
- *                 totalFollowers: 50
+ *                 totalFollowing: 4
  *                 page: 1
- *                 totalPages: 5
- *                 followers:
+ *                 totalPages: 1
+ *                 followersWithRecipes:
+ *                   - _id: "6664267a025b00dec061c020"
+ *                     name: "Vova"
+ *                     avatarURL: "https://s.gravatar.com/avatar/23463b99b62a72f26ed677cc556c44e8?s=250&r=pg&d=retro"
+ *                     totalRecipes: 0
+ *                     recipes: []
  *                   - _id: "666475c9568c641b4c0bbe28"
  *                     name: "John Doe"
- *                     avatarURL: "http://res.cloudinary.com/dgbwicpza/image/upload/v1717873428/avatars/hlvodxck85k5zjyu0zds.jpg"
- *                   - _id: "66642982025b00dec061c029"
- *                     name: "werewrew"
- *                     avatarURL: "https://s.gravatar.com/avatar/1aedb8d9dc4751e229a335e371db8058?s=250&r=pg&d=retro"
- *                   - _id: "666442dd025b00dec061c04e"
- *                     name: "Vova"
- *                     avatarURL: "https://s.gravatar.com/avatar/b63a966264a9496dad9792d8184f3244?s=250&r=pg&d=retro"
- *                   - _id: "64c8d958249fae54bae90bb8"
- *                     name: "Foodies user"
- *                     avatarURL: null
+ *                     avatarURL: "http://res.cloudinary.com/dgbwicpza/image/upload/v1718125430/avatars/ba1b1t0zhqnnyhkfgkb6.jpg"
+ *                     totalRecipes: 13
+ *                     recipes:
+ *                       - _id: "66661fa2ac16808623353208"
+ *                         title: "Beef Brisket Pot Roast"
+ *                         thumb: "http://res.cloudinary.com/dgbwicpza/image/upload/v1717968802/recipes/ttzbmmgadqj2pvn9zsat.jpg"
+ *                       - _id: "66661fc8ac1680862335320e"
+ *                         title: "Beef Brisket Pot Roast"
+ *                         thumb: "http://res.cloudinary.com/dgbwicpza/image/upload/v1717968840/recipes/mdvxhsksyj2abqoyffwz.jpg"
+ *                       - _id: "666622d5e4c50424eba37e56"
+ *                         title: "Beef Brisket Pot Roast"
+ *                         thumb: "http://res.cloudinary.com/dgbwicpza/image/upload/v1717969621/recipes/ois4qxnmjsqe346fujq1.jpg"
+ *                       - _id: "666626e2e479d6e145074058"
+ *                         title: "Potatoes with meat"
+ *                         thumb: "http://res.cloudinary.com/dgbwicpza/image/upload/v1717970658/recipes/o3drgxl2czs1q8y2plcy.jpg"
+ *                   - _id: "666492c597da40031e23fb48"
+ *                     name: "John Doe2"
+ *                     avatarURL: "https://s.gravatar.com/avatar/ab53a2911ddf9b4817ac01ddcd3d975f?s=250&r=pg&d=retro"
+ *                     totalRecipes: 0
+ *                     recipes: []
+ *                   - _id: "6666b62983e41dffa05f1c5f"
+ *                     name: "zrsryts"
+ *                     avatarURL: "https://s.gravatar.com/avatar/6a117eb6f5d88e7b854c92d9ae279720?s=250&r=pg&d=retro"
+ *                     totalRecipes: 0
+ *                     recipes: []
  *       401:
  *         description: Unauthorized, authentication token is missing or invalid
  *         content:
@@ -642,11 +685,17 @@
  *           type: integer
  *           default: 10
  *         description: The number of users per page
+ *       - in: query
+ *         name: rlimit
+ *         schema:
+ *           type: integer
+ *           default: 4
+ *         description: The number of recipes to retrieve per following user
  *     security:
  *       - BearerAuth: []
  *     responses:
  *       200:
- *         description: List of users the current user is following retrieved successfully
+ *         description: List of users that the specified user is following retrieved successfully with their recipes
  *         content:
  *           application/json:
  *             schema:
@@ -654,44 +703,81 @@
  *               properties:
  *                 totalFollowing:
  *                   type: integer
- *                   example: 50
+ *                   example: 4
  *                 page:
  *                   type: integer
  *                   example: 1
  *                 totalPages:
  *                   type: integer
- *                   example: 5
- *                 following:
+ *                   example: 1
+ *                 followersWithRecipes:
  *                   type: array
  *                   items:
  *                     type: object
  *                     properties:
  *                       _id:
  *                         type: string
- *                         example: "666475c9568c641b4c0bbe28"
+ *                         example: "6664267a025b00dec061c020"
  *                       name:
  *                         type: string
- *                         example: "John Doe"
+ *                         example: "Vova"
  *                       avatarURL:
  *                         type: string
- *                         example: "http://res.cloudinary.com/dgbwicpza/image/upload/v1717873428/avatars/hlvodxck85k5zjyu0zds.jpg"
+ *                         example: "https://s.gravatar.com/avatar/23463b99b62a72f26ed677cc556c44e8?s=250&r=pg&d=retro"
+ *                       totalRecipes:
+ *                         type: integer
+ *                         example: 0
+ *                       recipes:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             _id:
+ *                               type: string
+ *                               example: "66661fa2ac16808623353208"
+ *                             title:
+ *                               type: string
+ *                               example: "Beef Brisket Pot Roast"
+ *                             thumb:
+ *                               type: string
+ *                               example: "http://res.cloudinary.com/dgbwicpza/image/upload/v1717968802/recipes/ttzbmmgadqj2pvn9zsat.jpg"
  *               example:
- *                 totalFollowing: 50
+ *                 totalFollowing: 4
  *                 page: 1
- *                 totalPages: 5
- *                 following:
+ *                 totalPages: 1
+ *                 followingWithRecipes:
+ *                   - _id: "6664267a025b00dec061c020"
+ *                     name: "Vova"
+ *                     avatarURL: "https://s.gravatar.com/avatar/23463b99b62a72f26ed677cc556c44e8?s=250&r=pg&d=retro"
+ *                     totalRecipes: 0
+ *                     recipes: []
  *                   - _id: "666475c9568c641b4c0bbe28"
  *                     name: "John Doe"
- *                     avatarURL: "http://res.cloudinary.com/dgbwicpza/image/upload/v1717873428/avatars/hlvodxck85k5zjyu0zds.jpg"
- *                   - _id: "66642982025b00dec061c029"
- *                     name: "werewrew"
- *                     avatarURL: "https://s.gravatar.com/avatar/1aedb8d9dc4751e229a335e371db8058?s=250&r=pg&d=retro"
- *                   - _id: "666442dd025b00dec061c04e"
- *                     name: "Vova"
- *                     avatarURL: "https://s.gravatar.com/avatar/b63a966264a9496dad9792d8184f3244?s=250&r=pg&d=retro"
- *                   - _id: "64c8d958249fae54bae90bb8"
- *                     name: "Foodies user"
- *                     avatarURL: null
+ *                     avatarURL: "http://res.cloudinary.com/dgbwicpza/image/upload/v1718125430/avatars/ba1b1t0zhqnnyhkfgkb6.jpg"
+ *                     totalRecipes: 13
+ *                     recipes:
+ *                       - _id: "66661fa2ac16808623353208"
+ *                         title: "Beef Brisket Pot Roast"
+ *                         thumb: "http://res.cloudinary.com/dgbwicpza/image/upload/v1717968802/recipes/ttzbmmgadqj2pvn9zsat.jpg"
+ *                       - _id: "66661fc8ac1680862335320e"
+ *                         title: "Beef Brisket Pot Roast"
+ *                         thumb: "http://res.cloudinary.com/dgbwicpza/image/upload/v1717968840/recipes/mdvxhsksyj2abqoyffwz.jpg"
+ *                       - _id: "666622d5e4c50424eba37e56"
+ *                         title: "Beef Brisket Pot Roast"
+ *                         thumb: "http://res.cloudinary.com/dgbwicpza/image/upload/v1717969621/recipes/ois4qxnmjsqe346fujq1.jpg"
+ *                       - _id: "666626e2e479d6e145074058"
+ *                         title: "Potatoes with meat"
+ *                         thumb: "http://res.cloudinary.com/dgbwicpza/image/upload/v1717970658/recipes/o3drgxl2czs1q8y2plcy.jpg"
+ *                   - _id: "666492c597da40031e23fb48"
+ *                     name: "John Doe2"
+ *                     avatarURL: "https://s.gravatar.com/avatar/ab53a2911ddf9b4817ac01ddcd3d975f?s=250&r=pg&d=retro"
+ *                     totalRecipes: 0
+ *                     recipes: []
+ *                   - _id: "6666b62983e41dffa05f1c5f"
+ *                     name: "zrsryts"
+ *                     avatarURL: "https://s.gravatar.com/avatar/6a117eb6f5d88e7b854c92d9ae279720?s=250&r=pg&d=retro"
+ *                     totalRecipes: 0
+ *                     recipes: []
  *       401:
  *         description: Unauthorized, authentication token is missing or invalid
  *         content:
