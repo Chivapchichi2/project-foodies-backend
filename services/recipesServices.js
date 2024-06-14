@@ -4,7 +4,7 @@ import { processRecipe } from '../helpers/utils.js';
 
 export const listRecipes = async (search = {}) => {
   const { filter = {}, fields = '', settings = {} } = search;
-  const total = await countRecipe(filter);
+  const total = await countRecipeCreated(filter);
   let data = await Recipe.find(filter, fields, settings)
     .populate('owner', '_id name avatar email')
     .populate({
