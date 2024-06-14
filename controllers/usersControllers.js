@@ -11,6 +11,7 @@ import {
   countRecipeCreated,
   countRecipeFavorite,
 } from '../services/recipesServices.js';
+import Recipe from '../db/models/Recipe.js';
 
 const signUp = async (req, res) => {
   const { email } = req.body;
@@ -146,14 +147,15 @@ const getFollowers = async (req, res) => {
 
 const getFollowing = async (req, res) => {
   const { _id } = req.user;
-  const { page = 1, limit = 10 } = req.query;
+  const { page = 1, limit = 10, recipe = 4 } = req.query;
   const user = await usersServices.findUser({ _id }).populate('following');
+
   if (!user) {
     throw HttpError(404, 'User not found');
   }
+
   const startIndex = (page - 1) * limit;
   const endIndex = page * limit;
-
   const following = user.following.slice(startIndex, endIndex).map(follower => {
     return {
       _id: follower._id,
@@ -162,11 +164,28 @@ const getFollowing = async (req, res) => {
     };
   });
 
+  const followingWithRecipes = await Promise.all(
+    following.map(async fol => {
+      const recipes = await Recipe.find(
+        { owner: fol._id },
+        '_id title thumb'
+      ).limit(Number(recipe));
+      const totalRecipes = await Recipe.countDocuments({ owner: fol._id });
+      return {
+        _id: fol._id,
+        name: fol.name,
+        avatarURL: fol.avatarURL,
+        totalRecipes,
+        recipes,
+      };
+    })
+  );
+
   res.json({
     totalFollowing: user.following.length,
     page,
     totalPages: Math.ceil(user.following.length / limit),
-    following,
+    followingWithRecipes,
   });
 };
 
