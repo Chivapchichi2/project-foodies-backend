@@ -99,11 +99,26 @@ export const getAllFavoriteRecipe = async (skip, limit) => {
       $unwind: '$recipe',
     },
     {
+      $lookup: {
+        from: 'users',
+        localField: 'recipe.owner',
+        foreignField: '_id',
+        as: 'recipe.owner',
+      },
+    },
+    {
+      $unwind: '$recipe.owner',
+    },
+    {
       $project: {
         _id: 0,
         recipe: 1,
         count: 1,
+        owner: 1,
       },
+    },
+    {
+      $unset: ['recipe.owner.followers', 'recipe.owner.following'],
     },
   ]);
 
