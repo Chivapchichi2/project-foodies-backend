@@ -156,7 +156,7 @@ const removeFavoriteRecipe = async (req, res) => {
 };
 
 const getAllFavoriteRecipe = async (req, res) => {
-  let { page = 1, limit = 10 } = req.query;
+  let { page = 1, limit = 4 } = req.query;
   page = parseInt(page, 10);
   limit = parseInt(limit, 10);
   const skip = (page - 1) * limit;
