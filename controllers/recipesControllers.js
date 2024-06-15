@@ -56,7 +56,9 @@ const getOneRecipe = async (req, res) => {
 };
 
 const getRecipesFromUser = async (req, res) => {
-  const { _id: owner } = req.user;
+  console.log(req.params);
+  const { userId: owner } = req.params;
+  console.log(owner);
   const { page = 1, limit = 9 } = req.query;
   const skip = (page - 1) * limit;
 

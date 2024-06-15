@@ -25,7 +25,7 @@ recipesRouter.post(
 );
 
 recipesRouter.get(
-  '/myrecipes',
+  '/myrecipes/:userId',
   authenticate,
   recipesControllers.getRecipesFromUser
 );

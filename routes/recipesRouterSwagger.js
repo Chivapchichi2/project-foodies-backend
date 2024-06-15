@@ -237,13 +237,33 @@
 
 /**
  * @swagger
- * /api/recipes/myrecipes:
+ * /api/recipes/myrecipes/{userId}:
  *   get:
  *     summary: Get user's recipes
  *     description: Retrieve a list of recipes created by the authenticated user.
  *     tags: [Recipes]
  *     security:
  *       - BearerAuth: []
+ *     parameters:
+ *       - name: userId
+ *         in: path
+ *         required: true
+ *         description: ID of the User
+ *         schema:
+ *           type: string
+ *           default: 64c8d958249fae54bae90bb9
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: The page number to retrieve
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 9
+ *         description: The number of recipes per page
  *     responses:
  *       200:
  *         description: A list of user's recipes
