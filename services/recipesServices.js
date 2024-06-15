@@ -46,10 +46,7 @@ export const addRecipe = async data => {
 };
 
 export const addFavoriteRecipe = (recipeId, userId) => {
-  return Favorite.create({ recipe: recipeId, user: userId }).populate(
-    'owner',
-    '_id name avatar email'
-  );
+  return Favorite.create({ recipe: recipeId, user: userId });
 };
 
 export const removeFavoriteRecipe = (recipeId, userId) => {
@@ -97,11 +94,26 @@ export const getAllFavoriteRecipe = async (skip, limit) => {
       $unwind: '$recipe',
     },
     {
+      $lookup: {
+        from: 'users',
+        localField: 'recipe.owner',
+        foreignField: '_id',
+        as: 'recipe.owner',
+      },
+    },
+    {
+      $unwind: '$recipe.owner',
+    },
+    {
       $project: {
         _id: 0,
         recipe: 1,
         count: 1,
+        owner: 1,
       },
+    },
+    {
+      $unset: ['recipe.owner.followers', 'recipe.owner.following'],
     },
   ]);
 
