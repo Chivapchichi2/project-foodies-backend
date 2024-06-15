@@ -275,10 +275,10 @@ const getUserDetails = async (req, res) => {
 
   const isAuthorizedUser = _id.toString() === userId;
 
-  const createdRecipesCount = await countRecipeCreated(userId);
+  const createdRecipesCount = await countRecipeCreated({ owner: userId });
 
   if (isAuthorizedUser) {
-    const favoriteRecipesCount = await countRecipeFavorite(userId);
+    const favoriteRecipesCount = await countRecipeFavorite({ user: userId });
     const userDetails = {
       avatar: user.avatarURL,
       name: user.name,
