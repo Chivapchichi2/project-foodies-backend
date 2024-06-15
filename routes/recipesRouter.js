@@ -25,15 +25,15 @@ recipesRouter.post(
 );
 
 recipesRouter.get(
-  '/myrecipes/:userId',
-  authenticate,
-  recipesControllers.getRecipesFromUser
-);
-
-recipesRouter.get(
   '/myrecipes/favorites',
   authenticate,
   recipesControllers.getMyFavoriteRecipe
+);
+
+recipesRouter.get(
+  '/myrecipes/:userId',
+  authenticate,
+  recipesControllers.getRecipesFromUser
 );
 
 recipesRouter.post(
