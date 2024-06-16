@@ -223,11 +223,17 @@ const followUser = async (req, res) => {
     throw HttpError(400, 'User is already being followed');
   }
 
-  currentUser.following.push(userId);
-  await currentUser.save();
+  await usersServices.findUserAndUpdate(
+    { _id },
+    { $push: { following: userId } },
+    { new: true }
+  );
 
-  userToFollow.followers.push(_id);
-  await userToFollow.save();
+  await usersServices.findUserAndUpdate(
+    { _id: userId },
+    { $push: { followers: _id } },
+    { new: true }
+  );
 
   res.status(201).json({ message: 'User followed successfully' });
 };
@@ -250,16 +256,17 @@ const unfollowUser = async (req, res) => {
     throw HttpError(400, 'User is not being followed');
   }
 
-  currentUser.following = currentUser.following.filter(
-    id => id.toString() !== userId
-  );
-  await currentUser.save();
-
-  userToUnfollow.followers = userToUnfollow.followers.filter(
-    id => id.toString() !== _id.toString()
+  await usersServices.findUserAndUpdate(
+    { _id },
+    { $pull: { following: userId } },
+    { new: true }
   );
 
-  await userToUnfollow.save();
+  await usersServices.findUserAndUpdate(
+    { _id: userId },
+    { $pull: { followers: _id } },
+    { new: true }
+  );
 
   res.json({ message: 'User unfollowed successfully' });
 };
