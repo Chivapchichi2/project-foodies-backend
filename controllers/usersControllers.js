@@ -223,13 +223,13 @@ const followUser = async (req, res) => {
     throw HttpError(400, 'User is already being followed');
   }
 
-  await usersServices.findUserAndUpdate(
+  await usersServices.updateUser(
     { _id },
     { $push: { following: userId } },
     { new: true }
   );
 
-  await usersServices.findUserAndUpdate(
+  await usersServices.updateUser(
     { _id: userId },
     { $push: { followers: _id } },
     { new: true }
@@ -256,13 +256,13 @@ const unfollowUser = async (req, res) => {
     throw HttpError(400, 'User is not being followed');
   }
 
-  await usersServices.findUserAndUpdate(
+  await usersServices.updateUser(
     { _id },
     { $pull: { following: userId } },
     { new: true }
   );
 
-  await usersServices.findUserAndUpdate(
+  await usersServices.updateUser(
     { _id: userId },
     { $pull: { followers: _id } },
     { new: true }
