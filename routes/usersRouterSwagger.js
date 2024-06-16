@@ -86,10 +86,6 @@
  *     SelfUserDetails:
  *       type: object
  *       properties:
- *         id:
- *           type: string
- *           description: ID of the user
- *           example: "666492c597da40031e23fb48"
  *         avatar:
  *           type: string
  *           description: URL of the user's avatar image
@@ -122,10 +118,6 @@
  *     OtherUserDetails:
  *       type: object
  *       properties:
- *         id:
- *           type: string
- *           description: ID of the user
- *           example: "666492c597da40031e23fb48"
  *         avatar:
  *           type: string
  *           description: URL of the user's avatar image
