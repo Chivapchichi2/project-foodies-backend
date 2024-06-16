@@ -287,6 +287,7 @@ const getUserDetails = async (req, res) => {
   if (isAuthorizedUser) {
     const favoriteRecipesCount = await countRecipeFavorite({ user: userId });
     const userDetails = {
+      id: user._id,
       avatar: user.avatarURL,
       name: user.name,
       email: user.email,
@@ -298,6 +299,7 @@ const getUserDetails = async (req, res) => {
     res.json(userDetails);
   } else {
     const userDetails = {
+      id: user._id,
       avatar: user.avatarURL,
       name: user.name,
       email: user.email,
