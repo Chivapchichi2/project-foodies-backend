@@ -6,7 +6,7 @@ export const listRecipes = async (search = {}) => {
   const { filter = {}, fields = '', settings = {} } = search;
   const total = await countRecipeCreated(filter);
   let data = await Recipe.find(filter, fields, settings)
-    .populate('owner', '_id name avatar email')
+    .populate('owner', '_id name avatarURL email')
     .populate({
       path: 'ingredients.id',
       select: 'name desc img',
@@ -22,7 +22,7 @@ export const listRecipes = async (search = {}) => {
 
 export const getRecipeById = async recipetId => {
   const recipe = await Recipe.findOne({ _id: recipetId })
-    .populate('owner', '_id name avatar email')
+    .populate('owner', '_id name avatarURL email')
     .populate({
       path: 'ingredients.id',
       select: 'name desc img',
