@@ -119,6 +119,8 @@ const removeRecipe = async (req, res) => {
   const { id } = req.params;
 
   const result = await recipesService.removeRecipe(id, owner);
+  await recipesService.removeFavoriteRecipes(id);
+
   handleResult(result);
 
   res.json(result);

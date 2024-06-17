@@ -53,6 +53,9 @@ export const removeFavoriteRecipe = (recipeId, userId) => {
   return Favorite.findOneAndDelete({ recipe: recipeId, user: userId });
 };
 
+export const removeFavoriteRecipes = recipeId =>
+  Favorite.deleteMany({ recipe: recipeId });
+
 export const getMyFavoriteRecipe = async (search = {}) => {
   const { filter = {}, fields = '', settings = {} } = search;
 

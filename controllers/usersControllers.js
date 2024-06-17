@@ -209,12 +209,19 @@ const getFollowing = async (req, res) => {
 const followUser = async (req, res) => {
   const { _id } = req.user;
   const { userId } = req.params;
+
+  if (_id === userId) {
+    throw HttpError(400, 'You cannot follow yourself');
+  }
+
   const currentUser = await usersServices.findUser({ _id });
+
   if (!currentUser) {
     throw HttpError(404, 'User not found');
   }
 
   const userToFollow = await usersServices.findUser({ _id: userId });
+
   if (!userToFollow) {
     throw HttpError(404, 'User to follow not found');
   }
